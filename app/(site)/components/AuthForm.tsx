@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import axios from "axios";
+import { signIn } from "next-auth/react";
 import { FieldValues, useForm } from "react-hook-form";
 import { MdWavingHand } from "react-icons/md";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,10 +12,11 @@ import { Input } from "@/app/components/inputs/Input";
 import { registrationSchema } from "../schemas/registration";
 
 export const AuthForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, touchedFields },
     reset,
   } = useForm<FieldValues>({
     defaultValues: {
@@ -24,11 +28,22 @@ export const AuthForm = () => {
   });
 
   const onSubmit = (values: FieldValues) => {
-    console.log({ values });
+    setIsLoading(true);
+    axios
+      .post("/api/register", values)
+      .then(() => {
+        setIsLoading(false);
+        reset();
+        signIn("credentials", values);
+      })
+      .catch((err) => {
+        throw new Error("Registration error", err);
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
-    <div className="w-full lg:w-1/2 border border-gray-200 shadow-sm rounded-md py-3 sm:py-6 px-2 sm:px-12">
+    <div className="w-full lg:w-1/2 border border-gray-200 shadow-sm rounded-md py-3 sm:py-6 px-2 sm:px-6 lg:px-12">
       <div className="flex justify-center items-center flex-col">
         <MdWavingHand
           size={30}
@@ -60,12 +75,20 @@ export const AuthForm = () => {
           id="password"
           label="Password"
           register={register}
+          type="password"
           errors={errors}
           placeholder="Enter password"
           required
         />
-        <div>
-          <Button fullWidth>Sign up</Button>
+        <div className="py-4">
+          <Button
+            fullWidth
+            type="submit"
+            disabled={isLoading}
+            isLoading={isLoading}
+          >
+            Sign up
+          </Button>
         </div>
       </form>
     </div>

@@ -18,9 +18,7 @@ describe("Auth-form component", () => {
     expect(emailInput).toHaveValue("");
 
     // Password input
-    const passwordInput = screen.getByRole("textbox", {
-      name: /password/i,
-    });
+    const passwordInput = screen.getByLabelText(/password/i);
 
     expect(passwordInput).toBeInTheDocument();
     expect(passwordInput).toHaveValue("");
@@ -36,7 +34,9 @@ describe("Auth-form component", () => {
 
     const nameErrorMsg = await screen.findByText("Name is required");
     const emailErrorMsg = await screen.findByText("Email is required");
-    const passwordErrorMsg = await screen.findByText("Password must have at least 8 characters");
+    const passwordErrorMsg = await screen.findByText(
+      "Password must have at least 8 characters"
+    );
 
     expect(nameErrorMsg).toBeInTheDocument();
     expect(emailErrorMsg).toBeInTheDocument();
@@ -49,7 +49,7 @@ describe("Auth-form component", () => {
 
     const nameInput = screen.getByRole("textbox", { name: /name/i });
     const emailInput = screen.getByRole("textbox", { name: /email/i });
-    const passwordInput = screen.getByRole("textbox", { name: /password/i });
+    const passwordInput = screen.getByLabelText(/password/i);
 
     const submitButton = screen.getByRole("button", { name: "Sign up" });
 
