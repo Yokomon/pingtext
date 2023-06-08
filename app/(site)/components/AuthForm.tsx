@@ -6,17 +6,21 @@ import { signIn } from "next-auth/react";
 import { FieldValues, useForm } from "react-hook-form";
 import { MdWavingHand } from "react-icons/md";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { FcGoogle } from "react-icons/fc";
 
 import { Button } from "@/app/components/Button";
 import { Input } from "@/app/components/inputs/Input";
 import { registrationSchema } from "../schemas/registration";
+import { SocialButton } from "./SocialButton";
 
 export const AuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [socialsLoading, setSocialsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, touchedFields },
+    formState: { errors },
     reset,
   } = useForm<FieldValues>({
     defaultValues: {
@@ -34,12 +38,31 @@ export const AuthForm = () => {
       .then(() => {
         setIsLoading(false);
         reset();
-        signIn("credentials", values);
+        signIn("credentials", {
+          ...values,
+          callbackUrl: "/pings",
+        });
       })
       .catch((err) => {
         throw new Error("Registration error", err);
       })
       .finally(() => setIsLoading(false));
+  };
+
+  const socialLogin = (socialType: "google" | "facebook") => {
+    setSocialsLoading(true);
+    signIn(
+      socialType,
+      {
+        redirect: false,
+        callbackUrl: "/pings",
+      },
+      {
+        prompt: "login",
+      }
+    ).then((cb) => {
+      if (cb?.error) console.log("Error", cb.error);
+    });
   };
 
   return (
@@ -89,6 +112,29 @@ export const AuthForm = () => {
           >
             Sign up
           </Button>
+        </div>
+
+        <div className="space-y-3">
+          <div className="relative">
+            <div className="inline-flex items-center justify-center absolute inset-0">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="p-3 bg-white text-gray-600">
+                Or continue with
+              </span>
+            </div>
+          </div>
+          <SocialButton
+            type="button"
+            onClick={() => socialLogin("google")}
+            socialIcon={FcGoogle}
+            isLoading={socialsLoading}
+            disabled={socialsLoading}
+            fullWidth
+          >
+            Sign up with Google
+          </SocialButton>
         </div>
       </form>
     </div>
