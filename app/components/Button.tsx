@@ -35,7 +35,7 @@ export const Button: React.FC<ButtonProps> = ({
           danger,
         ["bg-white hover:bg-neutral-50 text-gray-900"]: secondary,
         ["!w-full"]: fullWidth,
-        ["opacity-50 cursor-not-allowed"]: disabled,
+        ["!opacity-50 cursor-not-allowed"]: disabled,
       })}
     >
       {children}
