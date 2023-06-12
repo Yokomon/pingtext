@@ -1,7 +1,16 @@
-import { AuthForm } from "./components/AuthForm";
 import { TiMessage } from "react-icons/ti";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+import { AuthForm } from "./components/AuthForm";
+import getSession from "../actions/getSession";
+
+export default async function Home() {
+  const session = await getSession();
+
+  if (session?.user) {
+    redirect("/pings");
+  }
+
   return (
     <main className="min-h-screen w-full p-6 sm:p-10 md:p-28 lg:p-14 flex flex-col lg:flex-row items-start lg:items-center space-y-4 sm:space-x-4 lg:justify-between">
       <div className="sm:mx-4 lg:mx-0 w-full lg:w-1/2">

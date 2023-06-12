@@ -16,12 +16,11 @@ export const authOptions: AuthOptions = {
     Credentials({
       name: "credentials",
       credentials: {
-        name: { label: "Name", type: "text" },
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.name || !credentials?.email || !credentials?.password)
+        if (!credentials?.email || !credentials?.password)
           throw new Error("Authorization error");
 
         const user = await prismadb.user.findUnique({
@@ -29,6 +28,21 @@ export const authOptions: AuthOptions = {
             email: credentials.email,
           },
         });
+
+        const socialUser = await prismadb.account.findFirst({
+          where: {
+            userId: user?.id,
+          },
+        });
+
+        if (user?.email && socialUser?.provider) {
+          throw new Error(
+            `User registered with ${socialUser.provider.replace(
+              /^./,
+              socialUser.provider[0].toUpperCase()
+            )}`
+          );
+        }
 
         if (!user?.email || !user.hashedPassword) {
           throw new Error("Invalid credentials");
