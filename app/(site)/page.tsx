@@ -1,4 +1,4 @@
-import { TiMessage } from "react-icons/ti";
+import { TiMessage } from "@react-icons/all-files/ti/TiMessage";
 import { redirect } from "next/navigation";
 
 import { AuthForm } from "./components/AuthForm";

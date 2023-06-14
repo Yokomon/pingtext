@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { BsSearch } from "react-icons/bs";
+import { BsSearch } from "@react-icons/all-files/bs/BsSearch";
 
 interface SearchInputProps {
   placeholder?: string;

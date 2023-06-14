@@ -4,9 +4,8 @@ import { useCallback, useState } from "react";
 import axios from "axios";
 import { signIn } from "next-auth/react";
 import { FieldValues, useForm } from "react-hook-form";
-import { MdWavingHand } from "react-icons/md";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { FcGoogle } from "react-icons/fc";
+import { FcGoogle } from "@react-icons/all-files/fc/FcGoogle";
 import { toast } from "react-hot-toast";
 
 import { Button } from "@/app/components/Button";
@@ -99,10 +98,6 @@ export const AuthForm = () => {
   return (
     <div className="w-full lg:w-1/2 border border-gray-200 shadow-sm rounded-md py-3 sm:py-6 px-2 sm:px-6 lg:px-12">
       <div className="flex justify-center items-center flex-col">
-        <MdWavingHand
-          size={30}
-          className="my-4 text-yellow-400 hover:rotate-45 cursor-pointer duration-300"
-        />
         <h3 className="text-base sm:text-lg text-gray-700 leading-7 mb-6 text-center">
           {variant === "REGISTER"
             ? getAuthFormText["defaultHeading"]
