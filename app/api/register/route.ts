@@ -27,5 +27,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.log(`An error ocurred in registration`, { error });
     return new NextResponse("INTERNAL SERVER ERROR", { status: 500 });
+  } finally {
+    await prismadb.$disconnect();
   }
 }
