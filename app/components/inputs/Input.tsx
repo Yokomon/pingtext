@@ -1,7 +1,8 @@
 "use client";
 
 import clsx from "clsx";
-import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
+import { BsEyeFill } from "@react-icons/all-files/bs/BsEyeFill";
+import { BsEyeSlashFill } from "@react-icons/all-files/bs/BsEyeSlashFill";
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import { useCallback, useMemo, useState } from "react";
 

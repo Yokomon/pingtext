@@ -1,7 +1,7 @@
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
-import { TiMessages } from "react-icons/ti";
-import { HiUsers } from "react-icons/hi";
+import { TiMessages } from "@react-icons/all-files/ti/TiMessages";
+import { FaUserFriends } from "@react-icons/all-files/fa/FaUserFriends";
 
 export const useRoutes = () => {
   const pathname = usePathname();
@@ -17,7 +17,7 @@ export const useRoutes = () => {
       {
         label: "friends",
         path: "/friends",
-        icon: HiUsers,
+        icon: FaUserFriends,
         active: pathname === "/friends",
       },
     ],
