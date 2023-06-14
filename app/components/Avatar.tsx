@@ -1,25 +1,46 @@
 "use client";
 
+import { User } from "@prisma/client";
 import Image from "next/image";
+import { useMemo } from "react";
 
 interface AvatarProps {
-  src: string;
+  currentUser?: User;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ src }) => {
+export const Avatar: React.FC<AvatarProps> = ({ currentUser }) => {
+  const initials = useMemo(() => {
+    if (currentUser) {
+      return currentUser.name?.toUpperCase()?.split(" ") as string[];
+    }
+    return [];
+  }, [currentUser]);
+
   return (
-    <div className="relative w-12">
-      <div className="relative rounded-full overflow-hidden ring-1 ring-offset-2 ring-sky-600 inline-block">
-        <Image
-          className="max-w-[10rem]"
-          width={40}
-          src={src}
-          alt={"avatar"}
-          height={40}
-          priority
-        />
+    <div>
+      <div className="w-12 relative flex justify-center items-center">
+        {currentUser?.image ? (
+          <div className="relative rounded-full overflow-hidden ring-1 ring-offset-2 ring-sky-600 inline-block">
+            <Image
+              className="max-w-[10rem]"
+              width={40}
+              src={currentUser.image}
+              alt={"avatar"}
+              height={40}
+              priority
+            />
+          </div>
+        ) : (
+          <div className="h-10 w-10 ring-sky-500 ring-1 ring-offset-2 rounded-full bg-gray-100 flex items-center justify-center">
+            {initials.map((el, idx) => (
+              <span className="text-gray-500 text-sm" key={idx}>
+                {el[0]}
+              </span>
+            ))}
+          </div>
+        )}
+        <span className="absolute block bg-teal-500 right-1 top-7 rounded-full p-1 ring-1 ring-white ring-offset-2" />
       </div>
-      <span className="absolute block bg-teal-500 right-2 top-7 rounded-full p-1 ring-1 ring-white ring-offset-2" />
     </div>
   );
 };
