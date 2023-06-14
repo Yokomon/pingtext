@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { ImSpinner10 } from "react-icons/im";
+import { ImSpinner10 } from "@react-icons/all-files/im/ImSpinner10";
 
 interface ButtonProps {
   disabled?: boolean;
@@ -12,6 +12,7 @@ interface ButtonProps {
   onClick?: () => void;
   danger?: boolean;
   isLoading?: boolean;
+  className?: string;
 }
 export const Button: React.FC<ButtonProps> = ({
   disabled,
@@ -22,6 +23,7 @@ export const Button: React.FC<ButtonProps> = ({
   fullWidth,
   children,
   isLoading,
+  className,
 }) => {
   return (
     <button
@@ -29,13 +31,15 @@ export const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       type={type}
       className={clsx({
-        ["relative rounded-md duration-300 p-2 py-3 text-sm sm:text-base bg-sky-600 font-semibold hover:bg-sky-700 text-white focus-visible:outline-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 flex items-center justify-center"]:
+        ["relative rounded-md duration-300 p-2 py-3 text-sm sm:text-base bg-sky-600 font-semibold hover:bg-sky-700 text-white focus-visible:outline-sky-600 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 flex items-center justify-center"]:
           true,
         ["bg-rose-500 hover:bg-rose-600 focus-visible:outline-rose-600"]:
           danger,
-        ["bg-white hover:bg-neutral-50 text-gray-900"]: secondary,
+        ["!bg-gray-300 hover:bg-gray-400 hover:!text-gray-600 !text-gray-700 focus-visible:outline-gray-600 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2"]:
+          secondary,
         ["!w-full"]: fullWidth,
         ["!opacity-50 cursor-not-allowed"]: disabled,
+        [className as string]: className,
       })}
     >
       {children}
