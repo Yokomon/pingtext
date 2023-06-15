@@ -14,6 +14,7 @@ import { Avatar } from "@/app/components/Avatar";
 import { FullFriendsTypes, FullUsersTypes } from "@/types/UserTypes";
 import { Modal } from "@/app/components/Modal";
 import { DynamicStateType } from "@/types/DynamicState";
+import { useMutation } from "@tanstack/react-query";
 
 interface FriendsListProps {
   friends: FullFriendsTypes[];
@@ -30,6 +31,19 @@ export const FriendsList: React.FC<FriendsListProps> = ({
   const [dynamicState, setDynamicState] = useState<DynamicStateType>({
     user: null,
     message: "",
+  });
+
+  const mutation = useMutation({
+    mutationFn: (values: { friendId: string }) => {
+      return axios.post("/api/friends", values);
+    },
+    onSuccess: async () => {
+      setOpenModal(!openModal);
+      toast.success(`✌️ Friend request sent to ${dynamicState.user?.name}`);
+    },
+    onError: async () => {
+      toast.error("An error occurred, please try again later");
+    },
   });
 
   const onClose = () => setOpenModal(!openModal);
@@ -49,17 +63,8 @@ export const FriendsList: React.FC<FriendsListProps> = ({
   // Function used to instantiate a new friend connection
   const createPingFriend = useCallback(() => {
     if (dynamicState.user === null) return;
-
-    axios
-      .post("/api/friends", {
-        friendId: dynamicState.user.id,
-      })
-      .then(() => {
-        setOpenModal(!openModal);
-        toast.success(`✌️ Friend request sent to ${dynamicState.user?.name}`);
-      })
-      .catch((err) => console.log({ err }));
-  }, [dynamicState.user, openModal]);
+    mutation.mutate({ friendId: dynamicState.user.id });
+  }, [mutation, dynamicState]);
 
   return (
     <div>
