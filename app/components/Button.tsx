@@ -33,12 +33,12 @@ export const Button: React.FC<ButtonProps> = ({
       className={clsx({
         ["relative rounded-md duration-300 p-2 py-3 text-sm sm:text-base bg-sky-600 font-semibold hover:bg-sky-700 text-white focus-visible:outline-sky-600 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 flex items-center justify-center"]:
           true,
-        ["bg-rose-500 hover:bg-rose-600 focus-visible:outline-rose-600"]:
+        ["!bg-rose-500 hover:!bg-rose-600 !text-white focus-visible:!outline-rose-600"]:
           danger,
-        ["!bg-gray-300 hover:bg-gray-400 hover:!text-gray-600 !text-gray-700 focus-visible:outline-gray-600 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2"]:
+        ["!bg-gray-300 hover:!bg-gray-400 hover:!text-gray-600 !text-gray-700 focus-visible:!outline-gray-600 focus-visible:!outline focus-visible:!outline-1 focus-visible:!outline-offset-2"]:
           secondary,
         ["!w-full"]: fullWidth,
-        ["!opacity-50 cursor-not-allowed"]: disabled,
+        ["!opacity-50 !cursor-not-allowed"]: disabled,
         [className as string]: className,
       })}
     >

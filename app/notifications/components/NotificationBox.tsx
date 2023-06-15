@@ -1,22 +1,20 @@
 "use client";
 
 import clsx from "clsx";
-import { format } from "date-fns";
 
 import { Avatar } from "@/app/components/Avatar";
 import { FullNotifications } from "@/types/NotificationTypes";
 import { EnableModalType } from "./NotificationsList";
+import { formatDate } from "@/app/libs/formatDate";
 
 interface NotificationBoxProps {
   data: FullNotifications[];
   enableModal: ({ user, notification }: EnableModalType) => Promise<void>;
-  unRead?: boolean;
 }
 
 export const NotificationBox: React.FC<NotificationBoxProps> = ({
   data,
   enableModal,
-  unRead,
 }) => {
   if (!data.length)
     return (
@@ -25,10 +23,7 @@ export const NotificationBox: React.FC<NotificationBoxProps> = ({
       </div>
     );
 
-  const handleModal = ({
-    user,
-    notification,
-  }: EnableModalType) => {
+  const handleModal = ({ user, notification }: EnableModalType) => {
     enableModal({ user, notification });
   };
 
@@ -44,22 +39,17 @@ export const NotificationBox: React.FC<NotificationBoxProps> = ({
             })
           }
           className={clsx({
-            ["flex space-x-3 my-2 p-4"]: true,
+            ["flex space-x-3 my-4 p-2"]: true,
             ["hover:bg-gray-100 cursor-pointer rounded-md pl-2 duration-300 hover:shadow-sm"]:
-              !notification.message.includes("accepted"),
+              !notification.message.match(/(accepted|rejected)/i),
           })}
         >
           <Avatar currentUser={sender} />
           <div className="relative w-full">
             <div className="flex text-gray-600 items-center justify-between">
-              <h4 className="text-sm">{sender.name}</h4>
+              <h4 className="text-sm truncate lg:w-40">{sender.name}</h4>
               <span className="text-xs text-gray-400">
-                {format(
-                  new Date(
-                    unRead ? notification.createdAt : notification.updatedAt
-                  ),
-                  "p"
-                )}
+                {formatDate(notification.updatedAt)}
               </span>
             </div>
             <p className="mt-2 truncate text-xs w-44 text-gray-400">

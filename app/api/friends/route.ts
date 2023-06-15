@@ -44,7 +44,7 @@ export async function PUT(req: Request) {
 
     const body = await req.json();
 
-    const { friendId, recipientId, notificationId } = body;
+    const { friendId, recipientId, notificationId, reject } = body;
 
     const existingFriend = await prismadb.friend.findFirst({
       where: {
@@ -66,7 +66,7 @@ export async function PUT(req: Request) {
         userId: friendId,
       },
       data: {
-        accepted: true,
+        accepted: reject ? false : true,
       },
     });
 
@@ -75,7 +75,9 @@ export async function PUT(req: Request) {
         id: notificationId,
       },
       data: {
-        message: "Friend request accepted.",
+        message: reject
+          ? "Rejected friend request"
+          : "Friend request accepted.",
       },
     });
 

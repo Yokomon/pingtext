@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { AuthContext } from "./context/AuthContext";
 import { ToastContext } from "./context/ToastContext";
 
+import QueryProvider from "./providers/QueryProvider";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -24,7 +26,7 @@ export default async function RootLayout({
       <body className={`max-w-[117rem] mx-auto ${inter.className}`}>
         <AuthContext>
           <ToastContext />
-          {children}
+          <QueryProvider>{children}</QueryProvider>
         </AuthContext>
       </body>
     </html>

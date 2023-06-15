@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useCallback, useState } from "react";
 import { signIn } from "next-auth/react";
 import { FieldValues, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,6 +23,24 @@ export const AuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [socialsLoading, setSocialsLoading] = useState(false);
 
+  const mutation = useMutation({
+    mutationFn: (values: FieldValues) => {
+      return axios.post("/api/register", values);
+    },
+    onSuccess: async (_, values) => {
+      reset();
+      signIn("credentials", {
+        ...values,
+        callbackUrl: "/pings",
+        redirect: false,
+      });
+    },
+    onError: async (error: any) => {
+      toast.error(getAuthErrMsg[error.response.status]);
+      setIsLoading(false);
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -41,36 +60,27 @@ export const AuthForm = () => {
       const { email, password } = values;
       if (variant === "REGISTER") {
         setIsLoading(true);
-        axios
-          .post("/api/register", values)
-          .then(() => {
-            setIsLoading(false);
-            reset();
-            signIn("credentials", {
-              ...values,
-              callbackUrl: "/pings",
-            });
-          })
-          .catch((err) => {
-            toast.error(getAuthErrMsg[err.response.status]);
-          })
-          .finally(() => setIsLoading(false));
+        mutation.mutate(values);
       } else {
         setIsLoading(true);
         signIn("credentials", {
           email,
           password,
-          callbackUrl: "/pings",
-        })
-          .then((cb) => {
-            if (cb?.error) {
-              toast.error(cb.error);
-            }
-          })
-          .finally(() => setIsLoading(false));
+          redirect: false,
+        }).then((cb) => {
+          if (cb?.error) {
+            toast.error(cb.error);
+            setIsLoading(false);
+            return;
+          }
+          if (cb?.ok) {
+            window.location.replace("/pings");
+            return;
+          }
+        });
       }
     },
-    [variant, reset]
+    [variant, mutation]
   );
 
   const socialLogin = (socialType: "google" | "facebook") => {
@@ -78,13 +88,9 @@ export const AuthForm = () => {
     signIn(socialType, {
       callbackUrl: "/pings",
       redirect: false,
-    }).then((cb) => {
-      if (cb?.error) {
-        return toast.error(cb.error);
-      } else {
-        return toast.success(`Authenticated successfully!`);
-      }
-    });
+    }).catch(() =>
+      toast.error("Something went wrong. Please try again later.")
+    );
   };
 
   const handleVariant = useCallback(() => {

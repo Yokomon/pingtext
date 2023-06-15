@@ -12,6 +12,7 @@ import { Modal } from "@/app/components/Modal";
 import { DynamicStateType } from "@/types/DynamicState";
 import { Notification, User } from "@prisma/client";
 import { NotificationBox } from "./NotificationBox";
+import { useMutation } from "@tanstack/react-query";
 
 interface NotificationsListProps {
   unReadNotifications: FullNotifications[];
@@ -27,6 +28,14 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
   readNotifications,
 }) => {
   const router = useRouter();
+  const mutation = useMutation({
+    mutationFn: (values: { notificationId: string }) => {
+      return axios.put("/api/notifications", values);
+    },
+    onSuccess: async () => {
+      return router.refresh();
+    },
+  });
 
   const [openNotifications, setOpenNotifications] = useState(false);
   const [dynamicState, setDynamicState] = useState<DynamicStateType>({
@@ -42,16 +51,12 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
 
   const enableModal = useCallback(
     async ({ user, notification }: EnableModalType) => {
-      const friendAccepted = notification.message.includes("accepted");
+      const nullAction = notification.message.match(/(accepted|rejected)/i);
 
-      if (friendAccepted) return;
+      if (nullAction) return;
 
       if (!notification.read) {
-        axios
-          .put("/api/notifications", {
-            notificationId: notification.id,
-          })
-          .then(() => router.refresh());
+        mutation.mutate({ notificationId: notification.id });
       }
 
       setOpenNotifications(!openNotifications);
@@ -63,7 +68,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
         notificationId: notification.id,
       }));
     },
-    [openNotifications, router]
+    [openNotifications, mutation]
   );
 
   const addFriendToList = (friend: User) => {
@@ -78,8 +83,25 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
         toast.success(`${friend.name} has been added to friends list`);
         router.refresh();
       })
-      .catch((err) => {
-        console.log({ err });
+      .catch(() => {
+        toast.error(`An error occured with the system. Please try again later`);
+      });
+  };
+
+  const rejectFriendShip = (friend: User) => {
+    axios
+      .put("/api/friends", {
+        friendId: friend.id,
+        recipientId: dynamicState.recipientId,
+        notificationId: dynamicState.notificationId,
+        reject: true,
+      })
+      .then(() => {
+        setOpenNotifications(!openNotifications);
+        toast.success(`Rejected friendship with ${friend.name}`);
+        router.refresh();
+      })
+      .catch(() => {
         toast.error(`An error occured with the system. Please try again later`);
       });
   };
@@ -93,8 +115,11 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
         primaryAction={() => addFriendToList(dynamicState.user!)}
         title="Friend request"
         content={dynamicState.message}
+        secondaryAction={() => rejectFriendShip(dynamicState.user!)}
+        secondaryText="Reject"
+        isDangerous
       />
-      <aside className="z-10 h-full lg:p-4 lg:pl-20 border-r border-gray-50 shadow-sm w-[27rem] fixed inset-0">
+      <aside className="z-10 h-full lg:p-4 lg:pl-20 border-r border-gray-50 shadow-sm lg:w-[27rem] fixed inset-0">
         <section className="px-5 pr-1">
           <h3 className="text-sky-600 text-3xl mb-4 font-semibold tracking-wide">
             Notifications
@@ -107,7 +132,6 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
             <NotificationBox
               data={unReadNotifications}
               enableModal={enableModal}
-              unRead
             />
           </div>
           <div className="relative mt-24">

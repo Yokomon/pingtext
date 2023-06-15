@@ -1,10 +1,11 @@
+import QueryProvider from "@/app/providers/QueryProvider";
 import { screen, render, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AuthForm } from "../AuthForm";
 
 describe("Auth-form component", () => {
   test("check input values on first-render and confirm they're all empty", () => {
-    render(<AuthForm />);
+    render(<AuthForm />, { wrapper: QueryProvider });
     // Name input
     const nameInput = screen.getByRole("textbox", { name: /name/i });
 
@@ -26,7 +27,7 @@ describe("Auth-form component", () => {
 
   test("confirm validation on empty field inputs", async () => {
     const user = userEvent.setup();
-    render(<AuthForm />);
+    render(<AuthForm />, { wrapper: QueryProvider });
 
     const submitButton = screen.getByRole("button", { name: "Sign up" });
 
@@ -45,7 +46,7 @@ describe("Auth-form component", () => {
 
   test("confirm user events on input and form submission", async () => {
     const user = userEvent.setup();
-    render(<AuthForm />);
+    render(<AuthForm />, { wrapper: QueryProvider });
 
     const nameInput = screen.getByRole("textbox", { name: /name/i });
     const emailInput = screen.getByRole("textbox", { name: /email/i });
