@@ -10,6 +10,8 @@ interface ModalProps {
   primaryAction: () => void;
   primaryText: string;
   secondaryText?: string;
+  secondaryAction?: () => void;
+  isDangerous?: boolean;
 }
 
 const modalActionStyles = "!text-sm !px-3 !py-2";
@@ -22,6 +24,8 @@ export const Modal: React.FC<ModalProps> = ({
   primaryAction,
   primaryText,
   secondaryText,
+  secondaryAction,
+  isDangerous,
 }) => {
   return (
     <>
@@ -66,9 +70,10 @@ export const Modal: React.FC<ModalProps> = ({
                     <div className="flex w-full space-x-4 justify-end items-center">
                       <Button
                         type="button"
+                        danger={isDangerous}
                         className={modalActionStyles}
-                        onClick={onClose}
-                        secondary
+                        onClick={secondaryAction ?? onClose}
+                        secondary={isDangerous ? false : true}
                       >
                         {secondaryText ?? "Cancel"}
                       </Button>
