@@ -32,7 +32,6 @@ export const AuthForm = () => {
       signIn("credentials", {
         ...values,
         callbackUrl: "/pings",
-        redirect: false,
       });
     },
     onError: async (error: any) => {
