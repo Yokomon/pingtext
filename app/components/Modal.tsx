@@ -1,5 +1,10 @@
-import { Dialog, Transition } from "@headlessui/react";
+"use client";
+
+import clsx from "clsx";
 import { Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { GrFormClose } from "@react-icons/all-files/gr/GrFormClose";
+
 import { Button } from "./Button";
 
 interface ModalProps {
@@ -12,6 +17,8 @@ interface ModalProps {
   secondaryText?: string;
   secondaryAction?: () => void;
   isDangerous?: boolean;
+  isLoading?: boolean;
+  userActions?: boolean;
 }
 
 const modalActionStyles = "!text-sm !px-3 !py-2";
@@ -26,12 +33,14 @@ export const Modal: React.FC<ModalProps> = ({
   secondaryText,
   secondaryAction,
   isDangerous,
+  isLoading,
+  userActions = true,
 }) => {
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center">
         <Transition as={Fragment} appear show={isOpen}>
-          <Dialog as="div" className={"z-50 relative"} onClose={onClose}>
+          <Dialog as="div" className={"z-50 relative"} onClose={() => {}}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -56,10 +65,21 @@ export const Modal: React.FC<ModalProps> = ({
                 >
                   <Dialog.Panel className="w-full max-w-md overflow-hidden transform rounded-md bg-white p-6 shadow-md text-left align-middle transition-all">
                     <Dialog.Title
-                      as="h3"
-                      className={"text-lg font-medium leading-6 text-gray-900"}
+                      as="div"
+                      className={
+                        "text-lg font-medium leading-6 text-gray-900 flex items-center justify-between"
+                      }
                     >
-                      {title}
+                      <h3>{title} </h3>
+                      <GrFormClose
+                        size={25}
+                        onClick={isLoading ? () => null : onClose}
+                        className={clsx({
+                          ["cursor-pointer hover:text-gray-500 duration-500"]:
+                            true,
+                          ["!cursor-not-allowed"]: isLoading,
+                        })}
+                      />
                     </Dialog.Title>
                     <Dialog.Description
                       as="p"
@@ -67,24 +87,29 @@ export const Modal: React.FC<ModalProps> = ({
                     >
                       {content}
                     </Dialog.Description>
-                    <div className="flex w-full space-x-4 justify-end items-center">
-                      <Button
-                        type="button"
-                        danger={isDangerous}
-                        className={modalActionStyles}
-                        onClick={secondaryAction ?? onClose}
-                        secondary={isDangerous ? false : true}
-                      >
-                        {secondaryText ?? "Cancel"}
-                      </Button>
-                      <Button
-                        type="button"
-                        className={modalActionStyles}
-                        onClick={() => primaryAction()}
-                      >
-                        {primaryText}
-                      </Button>
-                    </div>
+                    {userActions ? (
+                      <div className="flex w-full space-x-4 justify-end items-center">
+                        <Button
+                          type="button"
+                          disabled={isLoading}
+                          danger={isDangerous}
+                          className={modalActionStyles}
+                          onClick={secondaryAction ?? onClose}
+                          secondary={isDangerous ? false : true}
+                        >
+                          {secondaryText ?? "Cancel"}
+                        </Button>
+                        <Button
+                          isLoading={isLoading}
+                          disabled={isLoading}
+                          type="button"
+                          className={modalActionStyles}
+                          onClick={() => primaryAction()}
+                        >
+                          {primaryText}
+                        </Button>
+                      </div>
+                    ) : null}
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
