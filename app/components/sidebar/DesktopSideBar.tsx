@@ -8,7 +8,7 @@ import { Avatar } from "../Avatar";
 import { DesktopItem } from "./DesktopItem";
 
 interface DesktopSideBarProps {
-  currentUser?: User;
+  currentUser: User;
   notifications?: Notification[];
 }
 
