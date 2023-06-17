@@ -1,4 +1,4 @@
-import prismadb from "../libs/prismadb";
+import prismadb from "../utils/prismadb";
 import { getCurrentUser } from "./getCurrentUser";
 
 export default async function getOtherUsers() {
@@ -13,7 +13,14 @@ export default async function getOtherUsers() {
         },
       },
       include: {
-        friend: true,
+        friends: {
+          where: {
+            accepted: true,
+            userIds: {
+              has: currentUser.id,
+            },
+          },
+        },
       },
     });
 

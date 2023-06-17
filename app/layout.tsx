@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import { AuthContext } from "./context/AuthContext";
 import { ToastContext } from "./context/ToastContext";
 
-import QueryProvider from "./providers/QueryProvider";
+import QueryProvider from "./utils/QueryProvider";
 
 import "./globals.css";
 

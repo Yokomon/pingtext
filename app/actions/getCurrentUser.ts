@@ -1,4 +1,4 @@
-import prismadb from "../libs/prismadb";
+import prismadb from "../utils/prismadb";
 import getSession from "./getSession";
 
 export const getCurrentUser = async () => {
