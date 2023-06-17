@@ -35,7 +35,7 @@ export const Button: React.FC<ButtonProps> = ({
           true,
         ["!bg-rose-500 hover:!bg-rose-600 !text-white focus-visible:!outline-rose-600"]:
           danger,
-        ["!bg-gray-300 hover:!bg-gray-400 hover:!text-gray-600 !text-gray-700 focus-visible:!outline-gray-600 focus-visible:!outline focus-visible:!outline-1 focus-visible:!outline-offset-2"]:
+        ["!bg-gray-300 hover:!bg-gray-400 hover:!text-white !text-gray-600 focus-visible:!outline-gray-600 focus-visible:!outline focus-visible:!outline-1 focus-visible:!outline-offset-2"]:
           secondary,
         ["!w-full"]: fullWidth,
         ["!opacity-50 !cursor-not-allowed"]: disabled,
@@ -44,7 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {children}
       {isLoading && (
-        <ImSpinner10 className="motion-safe:animate-spin text-xl sm:text-2xl ml-8" />
+        <ImSpinner10 className="motion-safe:animate-spin text-xl sm:text-2xl ml-4" />
       )}
     </button>
   );
