@@ -1,16 +1,16 @@
 "use client";
 
-import { User } from "@prisma/client";
-import Image from "next/image";
 import { useMemo } from "react";
+import { Friend, User } from "@prisma/client";
+import Image from "next/image";
 
 interface AvatarProps {
-  currentUser?: User;
+  currentUser: User | Friend;
 }
 
 export const Avatar: React.FC<AvatarProps> = ({ currentUser }) => {
   const initials = useMemo(() => {
-    if (currentUser) {
+    if ("name" in currentUser!) {
       return currentUser.name?.toUpperCase()?.split(" ") as string[];
     }
     return [];
@@ -19,7 +19,7 @@ export const Avatar: React.FC<AvatarProps> = ({ currentUser }) => {
   return (
     <div>
       <div className="w-12 relative flex justify-center items-center">
-        {currentUser?.image ? (
+        {"image" in currentUser && currentUser?.image ? (
           <div className="relative rounded-full overflow-hidden ring-1 ring-offset-2 ring-sky-600 inline-block">
             <Image
               className="max-w-[10rem]"

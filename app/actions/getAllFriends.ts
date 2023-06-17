@@ -1,25 +1,36 @@
-import prismadb from "../libs/prismadb";
+import { NextResponse } from "next/server";
+import prismadb from "../utils/prismadb";
 import { getCurrentUser } from "./getCurrentUser";
 
 export async function getAllFriends() {
   try {
     const currentUser = await getCurrentUser();
 
-    if (!currentUser) return [];
+    if (!currentUser) return null;
 
     const friends = await prismadb.friend.findMany({
       where: {
-        friendId: currentUser.id,
+        userIds: {
+          has: currentUser.id,
+        },
         accepted: true,
       },
       include: {
-        user: true,
+        users: {
+          where: {
+            email: {
+              not: currentUser.email,
+            },
+          },
+        },
       },
     });
 
-    return friends;
+    return friends.map((friend) => ({ ...friend, users: friend.users[0] }));
   } catch (error) {
-    return [];
+    new NextResponse("INTERNAL SERVER ERROR", { status: 500 });
+    console.log({ error });
+    return null;
   } finally {
     await prismadb.$disconnect();
   }

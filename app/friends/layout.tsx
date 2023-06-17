@@ -9,16 +9,16 @@ interface LayoutProps {
 }
 
 async function Layout({ children }: LayoutProps) {
-  const friends = await getAllFriends();
+  const userFriends = await getAllFriends();
   const otherUsers = await getOtherUsers();
   const currentUser = await getCurrentUser();
   return (
     //@ts-expect-error Server component
     <SideBar>
       <FriendsList
-        friends={friends}
+        userFriends={userFriends!}
         otherUsers={otherUsers}
-        currentUser={currentUser}
+        currentUser={currentUser!}
       />
       {children}
     </SideBar>

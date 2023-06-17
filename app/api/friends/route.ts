@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
-import prismadb from "@/app/libs/prismadb";
+import prismadb from "@/app/utils/prismadb";
 
 export async function POST(req: Request) {
   try {
@@ -11,15 +11,7 @@ export async function POST(req: Request) {
 
     if (!currentUser) return null;
 
-    const friendShip = await prismadb.friend.create({
-      data: {
-        user: { connect: { id: currentUser.id } },
-        friend: { connect: { id: friendId } },
-        requestSent: true,
-      },
-    });
-
-    await prismadb.notification.create({
+    const newNotification = await prismadb.notification.create({
       data: {
         recipient: { connect: { id: friendId } },
         sender: { connect: { id: currentUser.id } },
@@ -27,7 +19,16 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(friendShip);
+    const newFriendShip = await prismadb.friend.create({
+      data: {
+        users: { connect: [{ id: currentUser.id }, { id: friendId }] },
+        requester: { connect: { id: currentUser.id } },
+        notification: { connect: { id: newNotification.id } },
+        requestSent: true,
+      },
+    });
+
+    return NextResponse.json(newFriendShip);
   } catch (error) {
     console.log({ error });
     return new NextResponse("INTERNAL SERVER ERROR", { status: 500 });
@@ -44,12 +45,11 @@ export async function PUT(req: Request) {
 
     const body = await req.json();
 
-    const { friendId, recipientId, notificationId, reject } = body;
+    const { friendId, notificationId, reject, userId } = body;
 
     const existingFriend = await prismadb.friend.findFirst({
       where: {
-        userId: friendId,
-        friendId: recipientId,
+        requesterId: userId,
       },
     });
 
@@ -61,27 +61,29 @@ export async function PUT(req: Request) {
       return new NextResponse("Notification does not exist", { status: 404 });
     }
 
-    const updateFriendRequest = await prismadb.friend.update({
-      where: {
-        userId: friendId,
-      },
-      data: {
-        accepted: reject ? false : true,
-      },
-    });
+    const result = await prismadb.$transaction([
+      prismadb.friend.update({
+        where: {
+          id: friendId,
+        },
+        data: {
+          accepted: reject ? false : true,
+        },
+      }),
+      prismadb.notification.update({
+        where: {
+          id: notificationId,
+        },
+        data: {
+          message: reject
+            ? "Rejected friend request"
+            : "Friend request accepted.",
+          friendRequestAccepted: reject ? false : true,
+        },
+      }),
+    ]);
 
-    await prismadb.notification.update({
-      where: {
-        id: notificationId,
-      },
-      data: {
-        message: reject
-          ? "Rejected friend request"
-          : "Friend request accepted.",
-      },
-    });
-
-    return NextResponse.json(updateFriendRequest);
+    return NextResponse.json(result);
   } catch (error) {
     console.log({ error });
     return null;

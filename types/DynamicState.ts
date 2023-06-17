@@ -1,9 +1,10 @@
-import { User } from "@prisma/client";
-import React from "react";
+import { Friend, User } from "@prisma/client";
 
 export interface DynamicStateType {
   user: null | User;
   recipientId?: string;
-  notificationId?: string
+  notificationId?: string;
   message: string;
+  friend: Friend | null;
+  userActions?: boolean;
 }

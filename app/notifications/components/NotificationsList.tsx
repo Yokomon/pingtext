@@ -6,30 +6,36 @@ import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FiEye } from "@react-icons/all-files/fi/FiEye";
 import { FiBell } from "@react-icons/all-files/fi/FiBell";
+import { useMutation } from "@tanstack/react-query";
+import { Friend, Notification, User } from "@prisma/client";
 
 import { FullNotifications } from "@/types/NotificationTypes";
 import { Modal } from "@/app/components/Modal";
 import { DynamicStateType } from "@/types/DynamicState";
-import { Notification, User } from "@prisma/client";
 import { NotificationBox } from "./NotificationBox";
-import { useMutation } from "@tanstack/react-query";
+import processNotification from "../utils/processNotification";
 
 interface NotificationsListProps {
   unReadNotifications: FullNotifications[];
   readNotifications: FullNotifications[];
+  currentUser: User;
 }
 
 export type EnableModalType = {
   user: User;
   notification: Notification;
+  friend: Friend | null;
+  isUserSender: boolean;
 };
 export const NotificationsList: React.FC<NotificationsListProps> = ({
   unReadNotifications,
   readNotifications,
+  currentUser,
 }) => {
   const router = useRouter();
-  const mutation = useMutation({
-    mutationFn: (values: { notificationId: string }) => {
+
+  const notificationMutation = useMutation({
+    mutationFn: (values: { notificationId: string; isUserSender: boolean }) => {
       return axios.put("/api/notifications", values);
     },
     onSuccess: async () => {
@@ -37,74 +43,98 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
     },
   });
 
+  const addFriendMutation = useMutation({
+    mutationFn: (values: {
+      userId: string;
+      notificationId?: string;
+      friendId?: string;
+    }) => {
+      return axios.put("/api/friends", values);
+    },
+    onSuccess: async () => {
+      toast.success(
+        `${dynamicState.user?.name} has been added to friends list`
+      );
+      setOpenNotifications(!openNotifications);
+      router.refresh();
+    },
+    onError: async () => {
+      toast.error(`An error occured with the system. Please try again later`);
+    },
+  });
+
+  const rejectFriendMutation = useMutation({
+    mutationFn: (values: {
+      notificationId?: string;
+      friendId?: string;
+      reject: boolean;
+    }) => {
+      return axios.put("/api/friends", values);
+    },
+    onSuccess: async () => {
+      toast.success(`Rejected friendship with ${dynamicState.user?.name}`);
+      setOpenNotifications(!openNotifications);
+      router.refresh();
+    },
+    onError: async () => {
+      toast.error(`An error occured with the system. Please try again later`);
+    },
+  });
+
   const [openNotifications, setOpenNotifications] = useState(false);
   const [dynamicState, setDynamicState] = useState<DynamicStateType>({
     user: null,
-    recipientId: "",
     notificationId: "",
     message: "",
+    friend: null,
+    userActions: true,
   });
+
+  const enableModal = useCallback(
+    async ({ user, notification, friend, isUserSender }: EnableModalType) => {
+      processNotification({
+        user,
+        notification,
+        friend,
+        isUserSender,
+        openNotifications,
+        notificationMutation,
+        currentUser,
+        setDynamicState,
+        setOpenNotifications,
+      });
+    },
+    [openNotifications, notificationMutation, currentUser]
+  );
+
+  const addFriendToList = (user: User | null) => {
+    if (!user)
+      return toast.error("Cannot perform operation. Please try again later.");
+
+    addFriendMutation.mutate({
+      userId: user.id,
+      notificationId: dynamicState.notificationId,
+      friendId: dynamicState.friend?.id,
+    });
+  };
+
+  const rejectFriendShip = (user: User | null) => {
+    if (!user)
+      return toast.error("Cannot perform operation. Please try again later.");
+
+    rejectFriendMutation.mutate({
+      friendId: dynamicState.friend?.id,
+      notificationId: dynamicState.notificationId,
+      reject: true,
+    });
+  };
+
+  const isModalLoading =
+    addFriendMutation.isLoading || rejectFriendMutation.isLoading;
 
   const onClose = useCallback(() => {
     setOpenNotifications(!openNotifications);
   }, [openNotifications]);
-
-  const enableModal = useCallback(
-    async ({ user, notification }: EnableModalType) => {
-      const nullAction = notification.message.match(/(accepted|rejected)/i);
-
-      if (nullAction) return;
-
-      if (!notification.read) {
-        mutation.mutate({ notificationId: notification.id });
-      }
-
-      setOpenNotifications(!openNotifications);
-      setDynamicState((state) => ({
-        ...state,
-        message: notification.message,
-        user,
-        recipientId: notification.recipientId,
-        notificationId: notification.id,
-      }));
-    },
-    [openNotifications, mutation]
-  );
-
-  const addFriendToList = (friend: User) => {
-    axios
-      .put("/api/friends", {
-        friendId: friend.id,
-        recipientId: dynamicState.recipientId,
-        notificationId: dynamicState.notificationId,
-      })
-      .then(() => {
-        setOpenNotifications(!openNotifications);
-        toast.success(`${friend.name} has been added to friends list`);
-        router.refresh();
-      })
-      .catch(() => {
-        toast.error(`An error occured with the system. Please try again later`);
-      });
-  };
-
-  const rejectFriendShip = (friend: User) => {
-    axios
-      .put("/api/friends", {
-        friendId: friend.id,
-        recipientId: dynamicState.recipientId,
-        notificationId: dynamicState.notificationId,
-        reject: true,
-      })
-      .then(() => {
-        setOpenNotifications(!openNotifications);
-        toast.success(`Rejected friendship with ${friend.name}`);
-        router.refresh();
-      })
-      .catch(() => {
-        toast.error(`An error occured with the system. Please try again later`);
-      });
-  };
 
   return (
     <>
@@ -112,11 +142,13 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
         isOpen={openNotifications}
         onClose={onClose}
         primaryText={"Add to friend list"}
-        primaryAction={() => addFriendToList(dynamicState.user!)}
+        primaryAction={() => addFriendToList(dynamicState.user)}
         title="Friend request"
         content={dynamicState.message}
-        secondaryAction={() => rejectFriendShip(dynamicState.user!)}
+        secondaryAction={() => rejectFriendShip(dynamicState.user)}
         secondaryText="Reject"
+        isLoading={isModalLoading}
+        userActions={dynamicState.userActions}
         isDangerous
       />
       <aside className="z-10 h-full lg:p-4 lg:pl-20 border-r border-gray-50 shadow-sm lg:w-[27rem] fixed inset-0">
@@ -132,6 +164,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
             <NotificationBox
               data={unReadNotifications}
               enableModal={enableModal}
+              currentUser={currentUser}
             />
           </div>
           <div className="relative mt-24">
@@ -142,6 +175,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
             <NotificationBox
               data={readNotifications}
               enableModal={enableModal}
+              currentUser={currentUser}
             />
           </div>
         </section>

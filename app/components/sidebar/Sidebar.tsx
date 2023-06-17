@@ -1,5 +1,5 @@
-import { getAllNotifications } from "@/app/actions/getAllNotifications";
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
+import { getCurrentUserNotifications } from "@/app/actions/getCurrentUserNotifications";
 import { DesktopSideBar } from "./DesktopSideBar";
 
 interface SideBarProps {
@@ -8,7 +8,7 @@ interface SideBarProps {
 
 export default async function SideBar({ children }: SideBarProps) {
   const currentUser = await getCurrentUser();
-  const notifications = await getAllNotifications("unread");
+  const notifications = await getCurrentUserNotifications();
   return (
     <div className="h-full">
       <DesktopSideBar

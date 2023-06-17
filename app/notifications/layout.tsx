@@ -1,4 +1,6 @@
-import { getAllNotifications } from "../actions/getAllNotifications";
+import { getReadNotifications } from "../actions/getReadNotifications";
+import { getCurrentUser } from "../actions/getCurrentUser";
+import { getCurrentUserNotifications } from "../actions/getCurrentUserNotifications";
 import SideBar from "../components/sidebar/Sidebar";
 import { NotificationsList } from "./components/NotificationsList";
 
@@ -7,15 +9,17 @@ interface LayoutProps {
 }
 
 async function Layout({ children }: LayoutProps) {
-  const unReadNotifications = await getAllNotifications("unread");
-  const readNotifications = await getAllNotifications("read");
+  const userNotifications = await getCurrentUserNotifications();
+  const readNotifications = await getReadNotifications();
+  const currentUser = await getCurrentUser();
 
   return (
     // @ts-expect-error Server component
     <SideBar>
       <NotificationsList
-        unReadNotifications={unReadNotifications}
+        unReadNotifications={userNotifications}
         readNotifications={readNotifications}
+        currentUser={currentUser!}
       />
       {children}
     </SideBar>

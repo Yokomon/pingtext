@@ -11,17 +11,16 @@ datasource db {
 }
 
 model User {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
-  email          String?        @unique
+  email          String   @unique
   emailVerified  DateTime?
   hashedPassword String?
   image          String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   account        Account[]
   pings          Pings[]
-  notification   Notification[]
 
   conversations    Conversation[] @relation(fields: [conversationsIds], references: [id])
   conversationsIds String[]       @db.ObjectId
@@ -29,8 +28,11 @@ model User {
   receivedPings    Pings[]  @relation("Receiver", fields: [receivedPingsIds], references: [id])
   receivedPingsIds String[] @db.ObjectId
 
-  friend              Friend?
-  friends             Friend[]       @relation("Friends")
+  friendRequests Friend[] @relation("Requester")
+  friends        Friend[] @relation(fields: [friendsIds], references: [id])
+  friendsIds     String[] @db.ObjectId
+
+  notification        Notification?
   notificationSenders Notification[] @relation("NotificationSenders")
 }
 
@@ -77,25 +79,30 @@ model Conversation {
 }
 
 model Friend {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String   @unique @db.ObjectId
-  friend      User     @relation("Friends", fields: [friendId], references: [id])
-  friendId    String   @db.ObjectId
-  requestSent Boolean  @default(false)
-  accepted    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  userIds         String[]     @db.ObjectId
+  users           User[]       @relation(fields: [userIds], references: [id])
+  requester       User         @relation("Requester", fields: [requesterId], references: [id])
+  requesterId     String       @db.ObjectId
+  requestSent     Boolean      @default(false)
+  accepted        Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  notification    Notification @relation(fields: [notificationIds], references: [id])
+  notificationIds String       @unique @db.ObjectId
 }
 
 model Notification {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  recipient   User     @relation(fields: [recipientId], references: [id])
-  recipientId String   @db.ObjectId
-  sender      User     @relation("NotificationSenders", fields: [senderId], references: [id])
-  senderId    String   @db.ObjectId
-  message     String
-  read        Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  recipient             User     @relation(fields: [recipientId], references: [id])
+  recipientId           String   @unique @db.ObjectId
+  sender                User     @relation("NotificationSenders", fields: [senderId], references: [id])
+  senderId              String   @db.ObjectId
+  message               String
+  readBySender          Boolean  @default(false)
+  readByRecipient       Boolean  @default(false)
+  friendRequestAccepted Boolean  @default(false)
+  friend                Friend?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }

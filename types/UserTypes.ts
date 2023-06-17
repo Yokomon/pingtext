@@ -5,9 +5,19 @@ export type MixedUsers = {
 };
 
 export type MixedFriends = {
-  friend: Friend | null
-}
+  friends: Friend[];
+};
 
-export type FullFriendsTypes = Friend & MixedUsers;
+export type AllFriends = Friend & {
+  users: User;
+};
 
-export type FullUsersTypes = User & MixedFriends
+export type FullFriendsTypes =
+  | (Friend & {
+      user: User;
+    })
+  | (Friend & {
+      friend: User;
+    });
+
+export type FullUsersTypes = User & MixedFriends;
