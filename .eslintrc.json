@@ -4,5 +4,19 @@
     "plugin:testing-library/react",
     "plugin:jest-dom/recommended"
   ],
-  "plugins": ["jest-dom", "testing-library"]
+  "rules": {
+    "no-console": "warn",
+    "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ]
+  },
+  "plugins": ["jest-dom", "testing-library", "unused-imports"]
 }
