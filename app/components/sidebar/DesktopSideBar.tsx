@@ -1,9 +1,12 @@
 "use client";
 
+import { signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { BiPowerOff } from "@react-icons/all-files/bi/BiPowerOff";
 import { FiBell } from "@react-icons/all-files/fi/FiBell";
+import { Notification, User } from "@prisma/client";
 
 import { useRoutes } from "@/app/hooks/useRoutes";
-import { Notification, User } from "@prisma/client";
 import { Avatar } from "../Avatar";
 import { DesktopItem } from "./DesktopItem";
 
@@ -17,6 +20,7 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
   notifications,
 }) => {
   const routes = useRoutes();
+  const pathname = usePathname();
 
   return (
     <div className="hidden lg:fixed h-full lg:inset-y-0 lg:left-0 lg:w-20 z-20 bg-gray-50 lg:flex flex-col shadow-sm p-4">
@@ -34,15 +38,24 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
         </ul>
       </nav>
       <nav className="flex flex-col space-y-5 items-center justify-center mt-auto">
-        <ul role={"list"}>
+        <ul role={"list"} className="space-y-5">
           <DesktopItem
             label="Notifications"
             path="/notifications"
             icon={FiBell}
+            active={pathname === "/notifications"}
             notifications={notifications}
           />
+          <li>
+            <Avatar currentUser={currentUser} />
+          </li>
+          <DesktopItem
+            label="Sign out"
+            icon={BiPowerOff}
+            onClick={signOut}
+            signOut
+          />
         </ul>
-        <Avatar currentUser={currentUser} />
       </nav>
     </div>
   );
