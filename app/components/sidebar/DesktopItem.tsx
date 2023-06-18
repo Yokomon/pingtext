@@ -7,11 +7,12 @@ import { Notification } from "@prisma/client";
 
 interface DesktopItemProps {
   label: string;
-  path: string;
+  path?: string;
   icon: IconType;
   active?: boolean;
   notifications?: Notification[];
   onClick?: () => void;
+  signOut?: boolean;
 }
 
 export const DesktopItem: React.FC<DesktopItemProps> = ({
@@ -21,9 +22,10 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
   active,
   onClick,
   notifications,
+  signOut,
 }) => {
   const handleClick = () => {
-    if (onClick) return onClick;
+    if (onClick) return onClick();
   };
   return (
     <li
@@ -31,24 +33,36 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
       className={clsx({
         ["hover:bg-sky-50 p-3 rounded-sm duration-300 relative"]: true,
         ["bg-sky-50"]: active,
+        ["hover:!bg-rose-100"]: signOut,
       })}
     >
-      <Link
-        href={path}
-        className={clsx({
-          ["focus:outline-none text-gray-400 hover:text-sky-600 duration-300"]:
-            true,
-          ["!text-sky-600"]: active,
-        })}
-      >
-        <Icon size={25} />
-        {!!notifications?.length && (
-          <span className="text-[10px] rounded-full p-1.5 h-4 w-fit flex items-center text-white absolute top-2 right-0 bg-rose-600">
-            {notifications.length}
-          </span>
-        )}
-        <span className="sr-only">{label}</span>
-      </Link>
+      {path ? (
+        <Link
+          href={path}
+          className={clsx({
+            ["focus:outline-none text-gray-400 hover:text-sky-600 duration-300"]:
+              true,
+            ["!text-sky-600"]: active,
+          })}
+        >
+          <Icon size={25} />
+          {!!notifications?.length && (
+            <span className="text-[10px] rounded-full p-1.5 h-4 w-fit flex items-center text-white absolute top-2 right-0 bg-rose-600">
+              {notifications.length}
+            </span>
+          )}
+          <span className="sr-only">{label}</span>
+        </Link>
+      ) : (
+        <div
+          className={clsx({
+            ["text-rose-400 hover:text-rose-500 cursor-pointer"]: signOut,
+          })}
+        >
+          <Icon size={25} />
+          <span className="sr-only">{label}</span>
+        </div>
+      )}
     </li>
   );
 };
