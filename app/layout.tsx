@@ -6,6 +6,7 @@ import { ToastContext } from "./context/ToastContext";
 import QueryProvider from "./utils/QueryProvider";
 
 import "./globals.css";
+import { NextThemeProvider } from "./providers/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,10 +24,14 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`max-w-[117rem] mx-auto ${inter.className}`}>
+      <body
+        className={`max-w-[117rem] mx-auto ${inter.className} dark:bg-black`}
+      >
         <AuthContext>
           <ToastContext />
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <NextThemeProvider>{children}</NextThemeProvider>
+          </QueryProvider>
         </AuthContext>
       </body>
     </html>

@@ -31,7 +31,7 @@ export const FriendsBox: React.FC<FriendsBoxProps> = ({
             "justify-between": discovery,
           })}
         >
-          <h3 className="text-sm text-gray-600">{user.name}</h3>
+          <h3 className="text-sm text-gray-600 dark:text-white">{user.name}</h3>
           {discovery ? (
             friendShipAccepted ? (
               <RiUserFollowFill
@@ -47,7 +47,7 @@ export const FriendsBox: React.FC<FriendsBoxProps> = ({
             )
           ) : null}
         </div>
-        <span className="text-xs">Available</span>
+        <span className="text-xs dark:text-gray-400">Available</span>
       </div>
     </div>
   );
