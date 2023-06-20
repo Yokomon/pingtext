@@ -137,7 +137,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
   }, [openNotifications]);
 
   return (
-    <>
+    <div>
       <Modal
         isOpen={openNotifications}
         onClose={onClose}
@@ -151,13 +151,13 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
         userActions={dynamicState.userActions}
         isDangerous
       />
-      <aside className="z-10 h-full lg:p-4 lg:pl-20 border-r border-gray-50 shadow-sm lg:w-[27rem] fixed inset-0">
+      <aside className="h-full lg:p-4 lg:pl-20 border-r border-gray-50 dark:border-gray-50/10 shadow-sm lg:w-[27rem] fixed inset-0">
         <section className="px-5 pr-1">
           <h3 className="text-sky-600 text-3xl mb-4 font-semibold tracking-wide">
             Notifications
           </h3>
           <div className="relative">
-            <div className="flex text-gray-500 items-center space-x-2 mb-4">
+            <div className="flex text-gray-500 dark:text-gray-200 items-center space-x-2 mb-4">
               <FiBell size={16} />
               <h5 className="text-base">All Notifications</h5>
             </div>
@@ -168,7 +168,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
             />
           </div>
           <div className="relative mt-24">
-            <div className="flex text-gray-500 items-center space-x-2 mb-4">
+            <div className="flex text-gray-500 dark:text-gray-200 items-center space-x-2 mb-4">
               <FiEye size={16} />
               <h5 className="text-base">Read Notifications</h5>
             </div>
@@ -180,6 +180,6 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
           </div>
         </section>
       </aside>
-    </>
+    </div>
   );
 };

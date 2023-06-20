@@ -13,6 +13,7 @@ interface DesktopItemProps {
   notifications?: Notification[];
   onClick?: () => void;
   signOut?: boolean;
+  isTheme?: boolean;
 }
 
 export const DesktopItem: React.FC<DesktopItemProps> = ({
@@ -23,17 +24,20 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
   onClick,
   notifications,
   signOut,
+  isTheme,
 }) => {
   const handleClick = () => {
     if (onClick) return onClick();
   };
   return (
     <li
-      onClick={handleClick}
       className={clsx({
-        ["hover:bg-sky-50 p-3 rounded-sm duration-300 relative"]: true,
-        ["bg-sky-50"]: active,
+        ["hover:bg-sky-50 dark:hover:bg-black p-3 rounded-sm duration-300 relative"]:
+          true,
+        ["bg-sky-50 dark:bg-black"]: active,
         ["hover:!bg-rose-100"]: signOut,
+        ["hover:dark:!bg-yellow-100 hover:!bg-slate-300 !rounded-full"]:
+          isTheme,
       })}
     >
       {path ? (
@@ -55,7 +59,10 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
         </Link>
       ) : (
         <div
+          onClick={handleClick}
           className={clsx({
+            ["cursor-pointer text-gray-400 dark:hover:text-yellow-500"]:
+              isTheme,
             ["text-rose-400 hover:text-rose-500 cursor-pointer"]: signOut,
           })}
         >

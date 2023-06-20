@@ -21,7 +21,7 @@ export const NotificationBox: React.FC<NotificationBoxProps> = ({
 }) => {
   if (!data.length)
     return (
-      <div className="text-center my-12 text-gray-500">
+      <div className="text-center my-12 text-gray-500 dark:text-gray-400">
         <h3 className="text-sm">No notifications</h3>
       </div>
     );
@@ -62,7 +62,7 @@ export const NotificationBox: React.FC<NotificationBoxProps> = ({
             <Avatar currentUser={isUserSender ? recipient! : sender} />
             <div className="relative w-full">
               <div className="flex text-gray-600 items-center justify-between">
-                <h4 className="text-sm truncate lg:w-40">
+                <h4 className="text-sm truncate lg:w-40 dark:text-white">
                   {isUserSender ? recipient?.name : sender.name}
                 </h4>
                 <span className="text-xs text-gray-400">

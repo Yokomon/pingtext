@@ -1,8 +1,12 @@
 "use client";
 
+import { useCallback } from "react";
+import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { BiPowerOff } from "@react-icons/all-files/bi/BiPowerOff";
+import { BsMoon } from "@react-icons/all-files/bs/BsMoon";
+import { HiOutlineLightBulb } from "@react-icons/all-files/hi/HiOutlineLightBulb";
 import { FiBell } from "@react-icons/all-files/fi/FiBell";
 import { Notification, User } from "@prisma/client";
 
@@ -19,11 +23,19 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
   currentUser,
   notifications,
 }) => {
+  const { theme, setTheme } = useTheme();
   const routes = useRoutes();
   const pathname = usePathname();
 
+  const handleTheme = useCallback(() => {
+    if (theme === "light") {
+      return setTheme("dark");
+    }
+    setTheme("light");
+  }, [theme, setTheme]);
+
   return (
-    <div className="hidden lg:fixed h-full lg:inset-y-0 lg:left-0 lg:w-20 z-20 bg-gray-50 lg:flex flex-col shadow-sm p-4">
+    <div className="hidden lg:fixed h-full lg:inset-y-0 lg:left-0 lg:w-20 z-10 bg-gray-50 dark:bg-black dark:border-r dark:border-gray-50/10 lg:flex flex-col shadow-sm p-4">
       <nav className="flex flex-col items-center justify-between">
         <ul role={"list"} className="mt-4 space-y-4 flex flex-col items-center">
           {routes.map(({ label, path, icon, active }) => (
@@ -49,6 +61,12 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
           <li>
             <Avatar currentUser={currentUser} />
           </li>
+          <DesktopItem
+            label={theme === "light" ? "Light" : "Dark"}
+            icon={theme === "light" ? BsMoon : HiOutlineLightBulb}
+            onClick={handleTheme}
+            isTheme
+          />
           <DesktopItem
             label="Sign out"
             icon={BiPowerOff}
