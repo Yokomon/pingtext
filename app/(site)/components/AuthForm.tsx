@@ -87,6 +87,7 @@ export const AuthForm = () => {
     signIn(socialType, {
       callbackUrl: "/pings",
       redirect: false,
+      prompt: "login",
     }).catch(() =>
       toast.error("Something went wrong. Please try again later.")
     );
