@@ -14,6 +14,6 @@ export const formatDate = (date: Date) => {
   } else if (yesterday) {
     return "Yesterday";
   } else {
-    return format(date, "dd/MM/YYYY");
+    return format(date, "dd/MM/yyyy");
   }
 };
