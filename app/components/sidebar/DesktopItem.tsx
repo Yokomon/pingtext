@@ -36,7 +36,7 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
           true,
         ["bg-sky-50 dark:bg-black"]: active,
         ["hover:!bg-rose-100"]: signOut,
-        ["hover:dark:!bg-yellow-100 hover:!bg-slate-300 !rounded-full"]:
+        ["hover:dark:!bg-yellow-100 hover:!bg-slate-200 !rounded-full"]:
           isTheme,
       })}
     >
@@ -61,7 +61,7 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
         <div
           onClick={handleClick}
           className={clsx({
-            ["cursor-pointer text-gray-400 dark:hover:text-yellow-500"]:
+            ["cursor-pointer text-gray-400 hover:text-white dark:hover:text-yellow-500"]:
               isTheme,
             ["text-rose-400 hover:text-rose-500 cursor-pointer"]: signOut,
           })}
