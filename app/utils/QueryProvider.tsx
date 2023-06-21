@@ -5,7 +5,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 function Providers({ children }: React.PropsWithChildren) {
   const [client] = useState(
-    new QueryClient({ defaultOptions: { queries: { staleTime: 5000 } } })
+    new QueryClient({ defaultOptions: { queries: { staleTime: 60000 } } })
   );
 
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;

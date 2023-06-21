@@ -70,8 +70,8 @@ model Conversation {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   name       String?
   isGroup    Boolean?
-  userIds    String[] @db.ObjectId
   users      User[]   @relation(fields: [userIds], references: [id])
+  userIds    String[] @db.ObjectId
   lastPingAt DateTime @default(now())
 
   createdAt DateTime @default(now())

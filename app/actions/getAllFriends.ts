@@ -29,7 +29,6 @@ export async function getAllFriends() {
     return friends.map((friend) => ({ ...friend, users: friend.users[0] }));
   } catch (error) {
     new NextResponse("INTERNAL SERVER ERROR", { status: 500 });
-    console.log({ error });
     return null;
   } finally {
     await prismadb.$disconnect();
