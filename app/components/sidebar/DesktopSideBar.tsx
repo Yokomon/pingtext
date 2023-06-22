@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -23,9 +23,15 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
   currentUser,
   notifications,
 }) => {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const routes = useRoutes();
   const pathname = usePathname();
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleTheme = useCallback(() => {
     if (theme === "light") {
@@ -33,6 +39,10 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
     }
     setTheme("light");
   }, [theme, setTheme]);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="hidden lg:fixed h-full lg:inset-y-0 lg:left-0 lg:w-20 z-10 bg-gray-50 dark:bg-black dark:border-r dark:border-gray-50/10 lg:flex flex-col shadow-sm p-4">

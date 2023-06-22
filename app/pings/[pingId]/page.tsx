@@ -1,4 +1,10 @@
-import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
+import { redirect } from "next/navigation";
+
+import { getConversationById } from "@/app/actions/getConversationById";
+import { getPings } from "@/app/actions/getMessages";
+import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
+import { Body } from "./components/Body";
 
 interface IParams {
   params: {
@@ -6,18 +12,20 @@ interface IParams {
   };
 }
 
-export default async function PingHomePage({}: IParams) {
+export default async function PingHomePage({ params }: IParams) {
+  const conversation = await getConversationById(params.pingId);
+  const pings = await getPings(params.pingId);
+  // Redirect users if there is no conversation
+  if (!conversation) redirect("/pings");
+
+  const otherUser = conversation?.users[0];
+
   return (
     <div className="lg:pl-[27rem] h-full">
-      <div className="h-full flex flex-col">
-        <div className="flex items-center p-4 h-20 justify-between border-b border-gray-50/10 w-full shadow-sm">
-          <div className="p-2 hover:bg-sky-100 rounded-full duration-500 ">
-            <MdArrowBack
-              size={24}
-              className="hover:text-sky-600 cursor-pointer text-gray-500"
-            />
-          </div>
-        </div>
+      <div className="flex h-full flex-col">
+        <Header otherUser={otherUser} />
+        <Body pings={pings} />
+        <Footer conversation={conversation} />
       </div>
     </div>
   );

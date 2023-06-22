@@ -16,8 +16,10 @@ export default async function RootLayout({
   return (
     // @ts-expect-error Server Component
     <SideBar>
-      <PingList conversations={userConversations} />
-      {children}
+      <div className="h-full">
+        <PingList conversations={userConversations} />
+        {children}
+      </div>
     </SideBar>
   );
 }
