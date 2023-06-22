@@ -13,7 +13,7 @@ datasource db {
 model User {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
-  email          String   @unique
+  email          String    @unique
   emailVerified  DateTime?
   hashedPassword String?
   image          String?
@@ -55,12 +55,14 @@ model Account {
 }
 
 model Pings {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  body        String
-  sender      User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  senderId    String   @db.ObjectId
-  receiver    User[]   @relation("Receiver", fields: [receiverIds], references: [id])
-  receiverIds String[] @db.ObjectId
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  body           String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId       String       @db.ObjectId
+  receiver       User[]       @relation("Receiver", fields: [receiverIds], references: [id])
+  receiverIds    String[]     @db.ObjectId
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String       @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -73,6 +75,8 @@ model Conversation {
   users      User[]   @relation(fields: [userIds], references: [id])
   userIds    String[] @db.ObjectId
   lastPingAt DateTime @default(now())
+  pings      Pings[]
+  pingIds    String[] @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
