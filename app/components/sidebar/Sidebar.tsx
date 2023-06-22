@@ -15,7 +15,7 @@ export default async function SideBar({ children }: SideBarProps) {
         currentUser={currentUser!}
         notifications={notifications}
       />
-      {children}
+      <main className="lg:pl-20 h-full">{children}</main>
     </div>
   );
 }

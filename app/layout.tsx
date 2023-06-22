@@ -24,9 +24,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`max-w-[117rem] mx-auto ${inter.className} dark:bg-black`}
-      >
+      <body className={`mx-auto ${inter.className} dark:bg-black`}>
         <AuthContext>
           <ToastContext />
           <QueryProvider>
