@@ -50,11 +50,11 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
           })}
         >
           <Icon size={25} />
-          {!!notifications?.length && (
+          {!!notifications?.length ? (
             <span className="text-[10px] rounded-full p-1.5 h-4 w-fit flex items-center text-white absolute top-2 right-0 bg-rose-600">
               {notifications.length}
             </span>
-          )}
+          ) : null}
           <span className="sr-only">{label}</span>
         </Link>
       ) : (

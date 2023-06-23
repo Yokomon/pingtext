@@ -1,5 +1,11 @@
-import { FullPingType } from "@/types/PingsType";
 import { format, isYesterday, isToday } from "date-fns";
+
+import { FullPingType } from "@/types/PingsType";
+
+type PingAccumulator = {
+  [index: string]: FullPingType[];
+};
+type PingItemAccumulator = (FullPingType | { type: string; date: string })[];
 
 export const formatDate = (date: Date, flag?: "pings") => {
   if (!date) return;
@@ -21,23 +27,29 @@ export const formatDate = (date: Date, flag?: "pings") => {
   }
 };
 
-export const formatPingChat = (pings: FullPingType[]) => {
-  if (!pings.length) return null;
+const groupedDays = (pings: FullPingType[]) => {
+  return pings.reduce((acc: PingAccumulator, el) => {
+    const pingDay = isToday(el.createdAt)
+      ? "Today"
+      : isYesterday(el.createdAt)
+      ? "Yesterday"
+      : format(el.createdAt, "dd/MM/yyyy");
 
-  const result = pings.reduce((acc, ping) => {
-    if (isToday(ping.createdAt)) {
-      if (acc !== "Today") {
-        acc = "Today";
-      }
-    } else if (isYesterday(ping.createdAt)) {
-      if (acc !== "Yesterday") {
-        acc = "Yesterday";
-      }
-    } else {
-      acc = format(ping.createdAt, "dd/MM/yyyy");
-    }
-    return acc;
-  }, "");
+    return {
+      ...acc,
+      [pingDay]: [...(acc[pingDay] || []), el],
+    };
+  }, {});
+};
 
-  return result;
+export const formatPingChats = (messages: FullPingType[]) => {
+  const days = groupedDays(messages);
+  const pingDays = Object.keys(days);
+
+  const pingItems = pingDays.reduce((acc: PingItemAccumulator, date) => {
+    const pings = days[date];
+    return [...acc, { type: "timeline", date }, ...pings];
+  }, []);
+
+  return pingItems;
 };

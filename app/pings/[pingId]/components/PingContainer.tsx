@@ -35,8 +35,8 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
   const message = clsx({
     ["text-sm dark:text-black overflow-hidden bg-gray-200 rounded-md py-2 px-3"]:
       true,
-    ["!bg-sky-500 ml-[2rem] lg:ml-[20rem] !text-white"]: isOwn,
-    ["mr-[2rem] lg:mr-[20rem]"]: !isOwn,
+    ["!bg-sky-500 ml-[2rem] lg:ml-[8rem] !text-white"]: isOwn,
+    ["mr-[2rem] lg:mr-[8rem]"]: !isOwn,
   });
 
   if (session.status === "loading") return null;
@@ -47,8 +47,8 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
         <Avatar currentUser={data.sender} />
       </div>
       <div className={body}>
-        <div className="flex items-center space-x-2">
-          <div className="text-sm text-gray-500">{data.sender.name}</div>
+        <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-200">
+          <div className="text-sm">{data.sender.name}</div>
           <div className="text-[10px] text-gray-400">
             {formatDate(data.createdAt)}
           </div>

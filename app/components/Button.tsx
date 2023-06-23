@@ -43,9 +43,9 @@ export const Button: React.FC<ButtonProps> = ({
       })}
     >
       {children}
-      {isLoading && (
+      {isLoading ? (
         <ImSpinner10 className="motion-safe:animate-spin text-xl sm:text-2xl ml-4" />
-      )}
+      ) : null}
     </button>
   );
 };
