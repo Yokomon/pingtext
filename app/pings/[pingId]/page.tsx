@@ -21,7 +21,7 @@ export default async function PingHomePage({ params }: IParams) {
   const otherUser = conversation?.users[0];
 
   return (
-    <div className="lg:pl-[27rem] h-full">
+    <div className="lg:pl-[22rem] h-full">
       <div className="flex h-full flex-col">
         <Header otherUser={otherUser} />
         <Body pings={pings} />
