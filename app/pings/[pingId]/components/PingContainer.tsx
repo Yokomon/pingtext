@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { Avatar } from "@/app/components/Avatar";
 import { FullPingType } from "@/types/PingsType";
 import { formatDate } from "@/app/utils/formatDate";
+import { decryptMessage } from "@/app/utils/encryption";
 
 interface PingContainerProps {
   data: FullPingType;
@@ -53,7 +54,7 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
             {formatDate(data.createdAt)}
           </div>
         </div>
-        <div className={message}>{data.body}</div>
+        <div className={message}>{decryptMessage(data.body)}</div>
       </div>
     </div>
   );
