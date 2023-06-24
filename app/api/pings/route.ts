@@ -1,6 +1,7 @@
+import { NextResponse } from "next/server";
+
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import prismadb from "@/app/utils/prismadb";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -52,6 +53,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newPing);
   } catch (error) {
+    console.log({ error });
     return new NextResponse("An error occured", { status: 500 });
   }
 }

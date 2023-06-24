@@ -1,12 +1,13 @@
 "use client";
 
+import axios from "axios";
+import { toast } from "react-hot-toast";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiSendPlaneFill } from "@react-icons/all-files/ri/RiSendPlaneFill";
 
 import { PingInput } from "./PingInput";
 import { FullConversationType } from "@/types/ConversationTypes";
-import axios from "axios";
-import { toast } from "react-hot-toast";
+import { encryptMessage } from "@/app/utils/encryption";
 
 interface FooterProps {
   conversation: FullConversationType;
@@ -19,15 +20,12 @@ export const Footer: React.FC<FooterProps> = ({ conversation }) => {
     },
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = (values) => {
+  const onSubmit: SubmitHandler<FieldValues> = ({ message }) => {
     setValue("message", "", { shouldValidate: true });
     axios
       .post("/api/pings", {
-        ...values,
+        message: encryptMessage(message as string),
         conversationId: conversation.id,
-      })
-      .then(({ data }) => {
-        console.log({ data });
       })
       .catch(() => toast.error("An error occurred, Please try again later"));
   };
