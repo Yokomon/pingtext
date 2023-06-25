@@ -1,4 +1,5 @@
 import { getConversations } from "../actions/getConversations";
+import { getCurrentUser } from "../actions/getCurrentUser";
 import SideBar from "../components/sidebar/Sidebar";
 import { PingList } from "./components/PingList";
 
@@ -13,11 +14,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const userConversations = await getConversations();
+  const currentUser = await getCurrentUser();
+
   return (
-    // @ts-expect-error Server Component
+    //@ts-expect-error Server component
     <SideBar>
       <div className="h-full">
-        <PingList conversations={userConversations} />
+        <PingList
+          conversations={userConversations}
+          currentUser={currentUser!}
+        />
         {children}
       </div>
     </SideBar>

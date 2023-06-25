@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { getConversationById } from "@/app/actions/getConversationById";
-import { getPings } from "@/app/actions/getMessages";
+import { getPings } from "@/app/actions/getPings";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { Body } from "./components/Body";

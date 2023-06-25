@@ -45,7 +45,7 @@ export const Footer: React.FC<FooterProps> = ({ conversation }) => {
           type="submit"
           className="cursor-pointer absolute top-0 -right-2 mx-2 w-10 h-10"
         >
-          <RiSendPlaneFill size={25} className="text-sky-600 rotate-45 " />
+          <RiSendPlaneFill size={25} className="text-sky-500 rotate-45 " />
         </button>
       </form>
     </div>

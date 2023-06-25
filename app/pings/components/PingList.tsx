@@ -7,12 +7,17 @@ import { SearchInput } from "@/app/components/inputs/SearchInput";
 import { FullConversationType } from "@/types/ConversationTypes";
 import { useConversation } from "@/app/hooks/useConversation";
 import { PingBox } from "./PingBox";
+import { User } from "@prisma/client";
 
 interface PingListProps {
   conversations: FullConversationType[];
+  currentUser: User;
 }
 
-export const PingList: React.FC<PingListProps> = ({ conversations }) => {
+export const PingList: React.FC<PingListProps> = ({
+  conversations,
+  currentUser,
+}) => {
   const [isOpen] = useConversation();
 
   return (
@@ -33,8 +38,15 @@ export const PingList: React.FC<PingListProps> = ({ conversations }) => {
             <BiMessageDetail size={17} />
             <h4 className="text-sm">All Pings</h4>
           </div>
-          {conversations.map(({ users, id }) => (
-            <PingBox user={users[0]} key={id} />
+          {conversations.map(({ users, id, pings, lastPingAt }) => (
+            <PingBox
+              otherUser={users[0]}
+              key={id}
+              pings={pings!}
+              lastPingAt={lastPingAt}
+              currentUser={currentUser}
+              conversationId={id}
+            />
           ))}
         </div>
       </div>
