@@ -24,6 +24,7 @@ export const getConversations = async () => {
             },
           },
         },
+        pings: true,
       },
     });
 
