@@ -1,14 +1,20 @@
 "use client";
 
 import { useMemo } from "react";
-import { Friend, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import Image from "next/image";
+import useChannelList from "../hooks/useChannelList";
+import { useStore } from "zustand";
 
 interface AvatarProps {
-  currentUser: User | Friend;
+  currentUser: User;
 }
 
 export const Avatar: React.FC<AvatarProps> = ({ currentUser }) => {
+  const { members } = useStore(useChannelList);
+
+  const isActive = members.has(currentUser.email);
+
   const initials = useMemo(() => {
     if (currentUser && "name" in currentUser) {
       return currentUser.name?.toUpperCase()?.split(" ") as string[];
@@ -41,7 +47,11 @@ export const Avatar: React.FC<AvatarProps> = ({ currentUser }) => {
             ))}
           </div>
         )}
-        <span className="absolute block bg-teal-500 right-1 top-7 rounded-full p-1 ring-1 ring-white dark:ring-gray-400 ring-offset-2" />
+        {isActive ? (
+          <span className="absolute block bg-teal-500 right-1 top-7 rounded-full p-1 ring-1 ring-white dark:ring-gray-400 ring-offset-2" />
+        ) : (
+          <span className="absolute block bg-slate-500 right-1 top-7 rounded-full p-1 ring-1 ring-white dark:ring-gray-400 ring-offset-2" />
+        )}
       </div>
     </div>
   );
