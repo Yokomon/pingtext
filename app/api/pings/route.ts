@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import prismadb from "@/app/utils/prismadb";
+import { pusherServer } from "@/app/lib/pusher";
 
 export async function POST(req: Request) {
   try {
@@ -31,7 +32,12 @@ export async function POST(req: Request) {
         },
         body: message,
       },
+      include: {
+        sender: true,
+      },
     });
+
+    await pusherServer.trigger(conversationId, "pings:new", newPing);
 
     await prismadb.conversation.update({
       where: {

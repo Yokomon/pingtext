@@ -38,6 +38,9 @@ export const PingBox: React.FC<PingBoxProps> = ({
     return router.push(`/pings/${conversationId}`);
   };
 
+  const getLastMessage = () =>
+    lastMessage ? decryptMessage(lastMessage.body) : `Start conversation`;
+
   return (
     <div
       onClick={handleRedirect}
@@ -49,9 +52,7 @@ export const PingBox: React.FC<PingBoxProps> = ({
       <div className="min-w-0 w-full">
         <div className="flex items-start justify-between w-full mb-2">
           <h3 className="text-sm">{otherUser.name}</h3>
-          <p className="text-xs mt-0.5">
-            {lastPingAt ? formatDate(lastPingAt) : null}
-          </p>
+          <p className="text-xs mt-0.5">{formatDate(lastPingAt)}</p>
         </div>
         <div className="flex justify-between items-center">
           <p
@@ -60,7 +61,7 @@ export const PingBox: React.FC<PingBoxProps> = ({
               ["text-gray-700 dark:text-inherit"]: unreadMessages,
             })}
           >
-            {decryptMessage(lastMessage.body)}
+            {getLastMessage()}
           </p>
           {unreadMessages ? (
             <span className="text-xs text-white bg-red-600 w-fit p-2 h-5 justify-center flex items-center rounded-full">

@@ -74,7 +74,7 @@ model Conversation {
   isGroup    Boolean?
   users      User[]   @relation(fields: [userIds], references: [id])
   userIds    String[] @db.ObjectId
-  lastPingAt DateTime @default(now())
+  lastPingAt DateTime?
   pings      Pings[]
   pingIds    String[] @db.ObjectId
 

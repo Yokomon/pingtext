@@ -51,7 +51,7 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
         <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-200">
           <div className="text-sm">{data.sender.name}</div>
           <div className="text-[10px] text-gray-400">
-            {formatDate(data.createdAt)}
+            {formatDate(data.createdAt, "optional")}
           </div>
         </div>
         <div className={message}>{decryptMessage(data.body)}</div>

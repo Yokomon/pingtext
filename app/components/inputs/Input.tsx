@@ -59,7 +59,7 @@ export const Input: React.FC<InputProps> = ({
           placeholder={placeholder}
           {...register(id, { required })}
           className={clsx({
-            ["form-input block w-full text-sm sm:text-base rounded-md ring-1 focus:ring-2 ring-gray-300 focus:ring-sky-600 placeholder:text-gray-400 ring-inset border-0 py-2 shadow-sm p-3"]:
+            ["form-input block w-full text-sm sm:text-base rounded-md ring-1 focus:ring-2 ring-gray-300 focus:ring-sky-600 placeholder:text-gray-400 ring-inset border-0 py-2 shadow-sm p-3 dark:text-gray-700"]:
               true,
             ["cursor-not-allowedm opacity-50"]: disabled,
             ["focus:!ring-rose-600"]: errors[id]?.message,

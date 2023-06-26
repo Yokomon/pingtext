@@ -1,4 +1,4 @@
-import { format, isYesterday, isToday } from "date-fns";
+import { format, isYesterday, isToday, parseISO } from "date-fns";
 
 import { FullPingType } from "@/types/PingsType";
 
@@ -7,23 +7,34 @@ type PingAccumulator = {
 };
 type PingItemAccumulator = (FullPingType | { type: string; date: string })[];
 
-export const formatDate = (date: Date, flag?: "pings") => {
-  if (!date) return;
-  // Check if date is today
-  const isTodayDate = isToday(date);
+export const formatDate = (
+  date: Date | string,
+  flag?: "pings" | "optional"
+): string => {
+  if (!date) return "";
 
-  // Check if input date was yesterday
-  const yesterday = isYesterday(date);
+  const parsedDate = typeof date === "string" ? parseISO(date) : date;
+  const isTodayDate = isToday(parsedDate);
+  const yesterday = isYesterday(parsedDate);
 
-  if (isTodayDate && flag) {
-    return "Today";
-  } else if (isTodayDate) {
-    const formattedDate = format(date, "p");
-    return formattedDate;
-  } else if (yesterday) {
-    return "Yesterday";
+  if (flag === "optional") {
+    if (isTodayDate) {
+      return format(parsedDate, "p");
+    } else if (yesterday) {
+      return "Yesterday";
+    } else {
+      return format(parsedDate, "dd/MM/yyyy");
+    }
   } else {
-    return format(date, "dd/MM/yyyy");
+    if (isTodayDate && flag) {
+      return "Today";
+    } else if (isTodayDate) {
+      return format(parsedDate, "p");
+    } else if (yesterday) {
+      return "Yesterday";
+    } else {
+      return format(parsedDate, "dd/MM/yyyy");
+    }
   }
 };
 

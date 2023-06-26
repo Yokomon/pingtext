@@ -12,7 +12,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen w-full p-6 sm:p-10 md:p-28 lg:p-14 flex flex-col lg:flex-row items-start lg:items-center space-y-4 sm:space-x-4 lg:justify-between">
+    <main className="min-h-screen max-w-[117rem] mx-auto p-6 sm:p-10 md:p-28 lg:p-14 flex flex-col lg:flex-row items-start lg:items-center space-y-4 sm:space-x-4 lg:justify-between">
       <div className="sm:mx-4 lg:mx-0 w-full lg:w-1/2">
         <div className="flex items-center space-x-4">
           <h1 className="bg-clip-text text-transparent h-14 sm:h-20 bg-gradient-to-r from-sky-400 to-sky-600 text-5xl sm:text-7xl">
