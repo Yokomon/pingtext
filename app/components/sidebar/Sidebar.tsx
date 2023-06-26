@@ -1,5 +1,6 @@
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { getCurrentUserNotifications } from "@/app/actions/getCurrentUserNotifications";
+import { ChannelStatus } from "../ChannelStatus";
 import { DesktopSideBar } from "./DesktopSideBar";
 
 interface SideBarProps {
@@ -11,6 +12,7 @@ export default async function SideBar({ children }: SideBarProps) {
   const notifications = await getCurrentUserNotifications();
   return (
     <div className="h-full">
+      <ChannelStatus />
       <DesktopSideBar
         currentUser={currentUser!}
         notifications={notifications}
