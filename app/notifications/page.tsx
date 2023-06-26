@@ -1,5 +1,5 @@
 const Notifications = () => {
-  return <div>Notifications page</div>;
+  return <div></div>;
 };
 
 export default Notifications;
