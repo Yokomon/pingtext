@@ -33,12 +33,13 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
 
     const pingHandler = (ping: FullPingType) => {
       setInitialData((data) => {
-        if (data.some((item) => "id" in item && item.id === ping.id)) {
-          return data;
-        }
-
-        const newPing = [...data, ping];
-        return newPing;
+        const hasTodayType = data.some(
+          (item) => "type" in item && item.date === "Today"
+        );
+        const newData = hasTodayType
+          ? [...data, ping]
+          : [...data, ...formatPingChats([ping])];
+        return newData;
       });
     };
 
