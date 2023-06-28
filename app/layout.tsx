@@ -7,6 +7,7 @@ import QueryProvider from "./utils/QueryProvider";
 
 import "./globals.css";
 import { NextThemeProvider } from "./providers/ThemeProvider";
+import { PusherProvider } from "./context/PusherContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,7 +29,9 @@ export default async function RootLayout({
         <AuthContext>
           <ToastContext />
           <QueryProvider>
-            <NextThemeProvider>{children}</NextThemeProvider>
+            <NextThemeProvider>
+              <PusherProvider>{children}</PusherProvider>
+            </NextThemeProvider>
           </QueryProvider>
         </AuthContext>
       </body>
