@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useConversation } from "@/app/hooks/useConversation";
-import { pusherClient } from "@/app/lib/pusher";
 import { formatPingChats } from "@/app/utils/formatDate";
 import { FullPingType } from "@/types/PingsType";
 import { DateStamp } from "./DateStamp";
 import { PingContainer } from "./PingContainer";
+import { usePusher } from "@/app/context/PusherContext";
 
 interface BodyProps {
   pings: FullPingType[];
@@ -15,6 +15,8 @@ interface BodyProps {
 
 export const Body: React.FC<BodyProps> = ({ pings }) => {
   const [initialData, setInitialData] = useState(formatPingChats(pings));
+
+  const pusherClient = usePusher();
 
   const bodyRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +52,7 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
       pusherClient.unsubscribe(conversationId as string);
       pusherClient.disconnect();
     };
-  }, [conversationId]);
+  }, [conversationId, pusherClient]);
 
   return (
     <div className="flex-1 h-full w-full overflow-y-auto bg-gray-50 dark:bg-black">
