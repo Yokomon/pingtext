@@ -1,12 +1,12 @@
 import { Channel, Members } from "pusher-js";
 import { useEffect, useState } from "react";
 
-import { pusherClient } from "../lib/pusher";
+import { usePusher } from "../context/PusherContext";
 import useChannelList from "./useChannelList";
 
 export function useChannel() {
   const { set, add, remove } = useChannelList();
-
+  const pusherClient = usePusher();
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
 
   useEffect(() => {
@@ -39,5 +39,5 @@ export function useChannel() {
         setActiveChannel(null);
       }
     };
-  }, [activeChannel, set, add, remove]);
+  }, [activeChannel, set, add, remove, pusherClient]);
 }

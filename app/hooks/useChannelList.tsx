@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
+
 import { decryptMessage, encryptMessage } from "../utils/encryption";
 
 interface ChannelList {

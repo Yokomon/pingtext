@@ -34,9 +34,9 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
   });
 
   const message = clsx({
-    ["text-sm dark:text-black overflow-hidden bg-gray-200 rounded-md py-2 px-3"]:
+    ["text-sm dark:text-black shadow-sm overflow-hidden bg-gray-200 rounded-md py-2 px-3"]:
       true,
-    ["!bg-sky-500 ml-[2rem] lg:ml-[8rem] !text-white"]: isOwn,
+    ["!bg-sky-400 ml-[2rem] lg:ml-[8rem] !text-white"]: isOwn,
     ["mr-[2rem] lg:mr-[8rem]"]: !isOwn,
   });
 
