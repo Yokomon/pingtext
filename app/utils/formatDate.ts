@@ -40,11 +40,14 @@ export const formatDate = (
 
 const groupedDays = (pings: FullPingType[]) => {
   return pings.reduce((acc: PingAccumulator, el) => {
-    const pingDay = isToday(el.createdAt)
+    const parsedDate =
+      typeof el.createdAt === "string" ? parseISO(el.createdAt) : el.createdAt;
+
+    const pingDay = isToday(parsedDate)
       ? "Today"
-      : isYesterday(el.createdAt)
+      : isYesterday(parsedDate)
       ? "Yesterday"
-      : format(el.createdAt, "dd/MM/yyyy");
+      : format(parsedDate, "dd/MM/yyyy");
 
     return {
       ...acc,
