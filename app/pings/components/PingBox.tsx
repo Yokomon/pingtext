@@ -7,6 +7,7 @@ import { decryptMessage } from "@/app/utils/encryption";
 import { formatDate } from "@/app/utils/formatDate";
 import { Pings, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { VoiceMessage } from "../[pingId]/components/VoiceMessage";
 
 interface PingBoxProps {
   otherUser: User;
@@ -39,7 +40,13 @@ export const PingBox: React.FC<PingBoxProps> = ({
   };
 
   const getLastMessage = () =>
-    lastMessage ? decryptMessage(lastMessage.body) : `Start conversation`;
+    lastMessage.audioUrl ? (
+      <VoiceMessage url={lastMessage.audioUrl} pingList />
+    ) : lastMessage.body ? (
+      decryptMessage(lastMessage.body)
+    ) : (
+      `Start conversation`
+    );
 
   return (
     <div
@@ -50,19 +57,19 @@ export const PingBox: React.FC<PingBoxProps> = ({
     >
       <Avatar currentUser={otherUser} />
       <div className="min-w-0 w-full">
-        <div className="flex items-start justify-between w-full mb-2">
+        <div className="flex items-start justify-between w-full mb-1">
           <h3 className="text-sm">{otherUser.name}</h3>
           <p className="text-xs mt-0.5">{formatDate(lastPingAt)}</p>
         </div>
         <div className="flex justify-between items-center">
-          <p
+          <div
             className={clsx({
               ["truncate w-40 text-sm text-gray-400"]: true,
               ["text-gray-700 dark:text-inherit"]: unreadMessages,
             })}
           >
             {getLastMessage()}
-          </p>
+          </div>
           {unreadMessages ? (
             <span className="text-xs text-white bg-red-600 w-fit p-2 h-5 justify-center flex items-center rounded-full">
               {unreadMessages}
