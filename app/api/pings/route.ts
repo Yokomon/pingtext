@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     if (!currentUser)
       return new NextResponse("Invalid session", { status: 401 });
 
-    const { message, conversationId } = await req.json();
+    const { message, conversationId, audioUrl } = await req.json();
 
     const newPing = await prismadb.pings.create({
       data: {
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
           },
         },
         body: message,
+        audioUrl,
       },
       include: {
         sender: true,
