@@ -56,7 +56,8 @@ model Account {
 
 model Pings {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
-  body           String
+  body           String?
+  audioUrl       String?
   sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
   senderId       String       @db.ObjectId
   receiver       User[]       @relation("Receiver", fields: [receiverIds], references: [id])
@@ -69,14 +70,14 @@ model Pings {
 }
 
 model Conversation {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String?
   isGroup    Boolean?
-  users      User[]   @relation(fields: [userIds], references: [id])
-  userIds    String[] @db.ObjectId
+  users      User[]    @relation(fields: [userIds], references: [id])
+  userIds    String[]  @db.ObjectId
   lastPingAt DateTime?
   pings      Pings[]
-  pingIds    String[] @db.ObjectId
+  pingIds    String[]  @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
