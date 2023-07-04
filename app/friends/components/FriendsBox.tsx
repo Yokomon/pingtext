@@ -14,7 +14,7 @@ import { FullUsersTypes } from "@/types/UserTypes";
 interface FriendsBoxProps {
   user: FullUsersTypes | User;
   discovery?: boolean;
-  enableModal?: (user: User) => void;
+  enableModal?: (_user: User) => void;
   friendShipAccepted?: boolean;
 }
 
