@@ -11,7 +11,7 @@ async function Layout({ children }: LayoutProps) {
   const userFriends = await getAllFriends();
   const otherUsers = await getOtherUsers();
   return (
-    //@ts-expect-error Server component
+    // @ts-ignore
     <SideBar>
       <FriendsList userFriends={userFriends!} otherUsers={otherUsers} />
       {children}
