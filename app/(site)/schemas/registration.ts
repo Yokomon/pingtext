@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { Variant } from "../components/AuthForm";
+import { Variant } from "../components/types";
 
 export const getRegistrationSchema = (variant: Variant) =>
   Yup.object().shape({

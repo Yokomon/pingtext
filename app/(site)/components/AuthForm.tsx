@@ -15,8 +15,7 @@ import { getRegistrationSchema } from "../schemas/registration";
 import { SocialButton } from "./SocialButton";
 import { getAuthFormText } from "./lib/getAuthFormText";
 import getAuthErrMsg from "./lib/getAuthErrMsg";
-
-export type Variant = "REGISTER" | "LOGIN";
+import { Variant } from "./types";
 
 export const AuthForm = () => {
   const [variant, setVariant] = useState<Variant>("REGISTER");

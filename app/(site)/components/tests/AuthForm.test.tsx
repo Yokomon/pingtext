@@ -1,5 +1,5 @@
 import QueryProvider from "@/app/utils/QueryProvider";
-import { screen, render, fireEvent } from "@testing-library/react";
+import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AuthForm } from "../AuthForm";
 
