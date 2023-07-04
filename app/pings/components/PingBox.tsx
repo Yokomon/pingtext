@@ -8,6 +8,7 @@ import { formatDate } from "@/app/utils/formatDate";
 import { Pings, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { VoiceMessage } from "../[pingId]/components/VoiceMessage";
+import { useGetUnreadPings } from "./hooks/useGetUnreadPings";
 
 interface PingBoxProps {
   otherUser: User;
@@ -25,28 +26,26 @@ export const PingBox: React.FC<PingBoxProps> = ({
   conversationId,
 }) => {
   const router = useRouter();
+  const { unreadPings } = useGetUnreadPings(pings, currentUser);
 
   const lastMessage = pings[pings.length - 1];
-
-  const unreadMessages = pings.reduce((prev, value) => {
-    if (value.receiverIds.indexOf(currentUser.id) === -1) {
-      prev = prev + 1;
-    }
-    return prev;
-  }, 0);
 
   const handleRedirect = () => {
     return router.push(`/pings/${conversationId}`);
   };
 
-  const getLastMessage = () =>
-    lastMessage.audioUrl ? (
-      <VoiceMessage url={lastMessage.audioUrl} pingList />
-    ) : lastMessage.body ? (
-      decryptMessage(lastMessage.body)
-    ) : (
-      `Start conversation`
-    );
+  const getLastMessage = () => {
+    if (lastMessage) {
+      if (lastMessage.audioUrl) {
+        return <VoiceMessage url={lastMessage.audioUrl} pingList />;
+      }
+      if (lastMessage.body) {
+        return decryptMessage(lastMessage.body);
+      }
+    }
+
+    return "Start a conversation";
+  };
 
   return (
     <div
@@ -65,14 +64,14 @@ export const PingBox: React.FC<PingBoxProps> = ({
           <div
             className={clsx({
               ["truncate w-40 text-sm text-gray-400"]: true,
-              ["text-gray-700 dark:text-inherit"]: unreadMessages,
+              ["text-gray-700 dark:text-inherit"]: unreadPings,
             })}
           >
             {getLastMessage()}
           </div>
-          {unreadMessages ? (
+          {unreadPings ? (
             <span className="text-xs text-white bg-red-600 w-fit p-2 h-5 justify-center flex items-center rounded-full">
-              {unreadMessages}
+              {unreadPings}
             </span>
           ) : null}
         </div>
