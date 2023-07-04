@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
 import { useConversation } from "@/app/hooks/useConversation";
@@ -8,6 +9,7 @@ import { FullPingType } from "@/types/PingsType";
 import { DateStamp } from "./DateStamp";
 import { PingContainer } from "./PingContainer";
 import { usePusher } from "@/app/context/PusherContext";
+import { PusherConversation } from "../../components/PingList";
 
 interface BodyProps {
   pings: FullPingType[];
@@ -23,24 +25,27 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
   const [_, conversationId] = useConversation();
 
   useEffect(() => {
+    if (!!initialData.length) {
+      axios.post(`/api/conversations/${conversationId}/seen`);
+    }
     setTimeout(() => {
-      if (bodyRef.current) {
-        bodyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (bodyRef.current && !!initialData.length) {
+        bodyRef.current.scrollIntoView(true);
       }
     }, 100);
-  }, [initialData]);
+  }, [initialData, conversationId]);
 
   useEffect(() => {
     pusherClient.subscribe(conversationId as string);
 
-    const pingHandler = (ping: FullPingType) => {
+    const pingHandler: (_T: PusherConversation) => void = ({ newPing }) => {
       setInitialData((data) => {
         const hasTodayType = data.some(
           (item) => "type" in item && item.date === "Today"
         );
         const newData = hasTodayType
-          ? [...data, ping]
-          : [...data, ...formatPingChats([ping])];
+          ? [...data, newPing]
+          : [...data, ...formatPingChats([newPing])];
         return newData;
       });
     };
@@ -50,7 +55,6 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
     return () => {
       pusherClient.unbind("pings:new", pingHandler);
       pusherClient.unsubscribe(conversationId as string);
-      pusherClient.disconnect();
     };
   }, [conversationId, pusherClient]);
 
