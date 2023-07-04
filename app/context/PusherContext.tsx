@@ -26,26 +26,6 @@ export const PusherProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [pusherClient]);
 
-  useEffect(() => {
-    const handleTabVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        pusherClient.disconnect();
-      } else {
-        pusherClient.connect();
-      }
-    };
-
-    // Check if the user is active on current tab to prevent socket loop
-    document.addEventListener("visibilitychange", handleTabVisibilityChange);
-
-    return () => {
-      document.removeEventListener(
-        "visibilitychange",
-        handleTabVisibilityChange
-      );
-    };
-  }, [pusherClient]);
-
   return (
     <PusherContext.Provider value={pusherClient}>
       {children}

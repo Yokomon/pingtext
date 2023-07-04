@@ -40,7 +40,7 @@ export const Avatar: React.FC<AvatarProps> = ({ currentUser }) => {
           </div>
         ) : (
           // Render the initials of the user
-          <div className="h-10 w-10 ring-sky-500 ring-1 dark:ring-0 dark:ring-offset-0 ring-offset-2 rounded-full bg-gray-100 dark:bg-white flex items-center justify-center">
+          <div className="h-10 w-10 ring-sky-500 ring-1 dark:ring-1 dark:ring-gray-500 ring-offset-2 rounded-full bg-gray-100 dark:bg-white flex items-center justify-center">
             {initials.map((el, idx) => (
               <span className="text-gray-500 text-sm" key={idx}>
                 {el[0]}

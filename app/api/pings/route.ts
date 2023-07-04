@@ -38,14 +38,17 @@ export async function POST(req: Request) {
       },
     });
 
-    await pusherServer.trigger(conversationId, "pings:new", newPing);
+    await pusherServer.trigger(conversationId, "pings:new", {
+      newPing,
+      conversationId,
+    });
 
     await prismadb.conversation.update({
       where: {
         id: conversationId,
       },
       data: {
-        lastPingAt: new Date(),
+        lastPingAt: newPing.createdAt,
         pings: {
           connect: {
             id: newPing.id,
@@ -54,13 +57,11 @@ export async function POST(req: Request) {
       },
       include: {
         users: true,
-        pings: true,
       },
     });
 
     return NextResponse.json(newPing);
   } catch (error) {
-    console.log({ error });
     return new NextResponse("An error occured", { status: 500 });
   }
 }

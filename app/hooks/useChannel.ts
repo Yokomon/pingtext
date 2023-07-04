@@ -34,6 +34,7 @@ export function useChannel() {
     return () => {
       if (activeChannel) {
         pusherClient.unsubscribe("presence-messenger");
+        pusherClient.unbind_all();
         pusherClient.disconnect();
 
         setActiveChannel(null);
