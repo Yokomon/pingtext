@@ -11,7 +11,6 @@ import { GrEmoji } from "@react-icons/all-files/gr/GrEmoji";
 import { FaMicrophone } from "@react-icons/all-files/fa/FaMicrophone";
 import { FaStop } from "@react-icons/all-files/fa/FaStop";
 import { randomBytes } from "crypto";
-
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
@@ -178,7 +177,7 @@ export const Footer: React.FC<FooterProps> = ({ conversation }) => {
               />
             </button>
           </div>
-          <button>
+          <button type="button">
             {recording ? (
               <FaStop
                 className="text-rose-500 animate-pulse"
