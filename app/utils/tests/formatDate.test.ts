@@ -1,5 +1,6 @@
 import { FullPingType } from "@/types/PingsType";
 import { formatDate, formatPingChats } from "../formatDate";
+import { mock_pingDate, mock_pingDate2, mock_pingDate3 } from "./__mocks__";
 
 const getDate = (date: Date, flag: "yesterday" | "daysAfter") => {
   switch (flag) {
@@ -35,95 +36,17 @@ describe("Format ping date specs", () => {
   });
 
   it.skip('should return "Today" if all pings are from today', () => {
-    const mock_pings: FullPingType[] = [
-      {
-        id: "id12312",
-        body: "Testing",
-        senderId: "senderId",
-        receiverIds: ["receiveId"],
-        conversationId: "convoId",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        sender: {
-          id: "6485b46cf41bbd41cc3505eb",
-          name: "Test 1",
-          email: "test1@test.com",
-          emailVerified: null,
-          hashedPassword: null,
-          image: "image",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          conversationsIds: ["conversationIds"],
-          receivedPingsIds: ["pingsId"],
-          friendsIds: ["firnedIds1"],
-        },
-      },
-    ];
-
-    const result = formatPingChats(mock_pings);
+    const result = formatPingChats(mock_pingDate);
     expect(result).toBe("Today");
   });
 
   it.skip('should return "Yesterday" if all pings are from yesterday', () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    const mock_pings: FullPingType[] = [
-      {
-        id: "id12312",
-        body: "Testing",
-        senderId: "senderId",
-        receiverIds: ["receiveId"],
-        conversationId: "convoId",
-        createdAt: yesterday,
-        updatedAt: yesterday,
-        sender: {
-          id: "6485b46cf41bbd41cc3505eb",
-          name: "Test 1",
-          email: "test1@test.com",
-          emailVerified: null,
-          hashedPassword: null,
-          image: "image",
-          createdAt: yesterday,
-          updatedAt: yesterday,
-          conversationsIds: ["conversationIds"],
-          receivedPingsIds: ["pingsId"],
-          friendsIds: ["firnedIds1"],
-        },
-      },
-    ];
-    const result = formatPingChats(mock_pings);
+    const result = formatPingChats(mock_pingDate2);
     expect(result).toBe("Yesterday");
   });
 
   it.skip("should return the formatted date if pings are from different dates", () => {
-    // Mocks will be moved in next release
-    const mock_pings: FullPingType[] = [
-      {
-        id: "id12312",
-        body: "Testing",
-        senderId: "senderId",
-        receiverIds: ["receiveId"],
-        conversationId: "convoId",
-        createdAt: new Date("2023-06-20"),
-        updatedAt: new Date("2023-06-20"),
-        sender: {
-          id: "6485b46cf41bbd41cc3505eb",
-          name: "Test 1",
-          email: "test1@test.com",
-          emailVerified: null,
-          hashedPassword: null,
-          image: "image",
-          createdAt: new Date("2023-06-21"),
-          updatedAt: new Date("2023-06-21"),
-          conversationsIds: ["conversationIds"],
-          receivedPingsIds: ["pingsId"],
-          friendsIds: ["firnedIds1"],
-        },
-      },
-    ];
-
-    const result = formatPingChats(mock_pings);
+    const result = formatPingChats(mock_pingDate3);
     expect(result).toBe("20/06/2023");
   });
 });
