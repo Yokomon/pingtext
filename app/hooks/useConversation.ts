@@ -5,9 +5,7 @@ export const useConversation = () => {
   const params = useParams();
 
   const conversationId = useMemo(() => {
-    if (!params.pingId) {
-      return "";
-    }
+    if (!params) return;
     return params.pingId as string;
   }, [params]);
 
