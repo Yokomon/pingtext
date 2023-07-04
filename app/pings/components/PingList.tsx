@@ -2,13 +2,20 @@
 
 import { BiMessageDetail } from "@react-icons/all-files/bi/BiMessageDetail";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 
 import { SearchInput } from "@/app/components/inputs/SearchInput";
 import { FullConversationType } from "@/types/ConversationTypes";
 import { useConversation } from "@/app/hooks/useConversation";
 import { PingBox } from "./PingBox";
 import { User } from "@prisma/client";
+import { usePusher } from "@/app/context/PusherContext";
+import { FullPingType } from "@/types/PingsType";
 
+export interface PusherConversation {
+  conversationId?: string;
+  newPing: FullPingType;
+}
 interface PingListProps {
   conversations: FullConversationType[];
   currentUser: User;
@@ -18,7 +25,55 @@ export const PingList: React.FC<PingListProps> = ({
   conversations,
   currentUser,
 }) => {
+  const [currentConversations, setCurrentConversations] =
+    useState(conversations);
   const [isOpen] = useConversation();
+  const pusherClient = usePusher();
+
+  useEffect(() => {
+    pusherClient.subscribe("conversations");
+
+    const newConversationHandler: (_T: FullConversationType) => void = (
+      conversation: FullConversationType
+    ) => {
+      setCurrentConversations((currentConversations) => {
+        if (
+          currentConversations.some((convo) => convo.id === conversation.id)
+        ) {
+          return currentConversations;
+        }
+
+        return [...currentConversations, conversation];
+      });
+    };
+
+    const updateConversation: (_T: PusherConversation) => void = ({
+      conversationId,
+      newPing,
+    }) => {
+      setCurrentConversations((currentConversation) =>
+        currentConversation.map((convo) => {
+          if (convo.id === conversationId) {
+            return {
+              ...convo,
+              pings: [...convo.pings!, newPing],
+              lastPingAt: newPing.createdAt,
+            };
+          }
+          return convo;
+        })
+      );
+    };
+
+    pusherClient.bind("conversations:new", newConversationHandler);
+    pusherClient.bind("conversations:update", updateConversation);
+
+    return () => {
+      pusherClient.unsubscribe("conversations");
+      pusherClient.unbind("conversations:new", newConversationHandler);
+      pusherClient.unbind("conversations:update", updateConversation);
+    };
+  }, [pusherClient]);
 
   return (
     <aside
@@ -38,12 +93,12 @@ export const PingList: React.FC<PingListProps> = ({
             <BiMessageDetail size={17} />
             <h4 className="text-sm">All Pings</h4>
           </div>
-          {conversations.map(({ users, id, pings, lastPingAt }) => (
+          {currentConversations.map(({ users, id, pings, lastPingAt }) => (
             <PingBox
               otherUser={users[0]}
               key={id}
               pings={pings!}
-              lastPingAt={lastPingAt}
+              lastPingAt={lastPingAt!}
               currentUser={currentUser}
               conversationId={id}
             />
