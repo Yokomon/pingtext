@@ -3,9 +3,8 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { IconType } from "@react-icons/all-files";
+
 import { Notification } from "@prisma/client";
-import { notificationSound } from "@/app/utils/notificationSound";
-import { useEffect, useState } from "react";
 
 interface DesktopItemProps {
   label: string;
@@ -28,26 +27,9 @@ export const DesktopItem: React.FC<DesktopItemProps> = ({
   signOut,
   isTheme,
 }) => {
-  const [soundPlayed, setSoundPlayed] = useState(false);
-
   const handleClick = () => {
     if (onClick) return onClick();
   };
-
-  useEffect(() => {
-    const audioContext = new AudioContext();
-    audioContext.resume();
-    const pingSound = notificationSound();
-
-    if (!!notifications?.length && !soundPlayed) {
-      pingSound.play();
-      setSoundPlayed(true);
-    }
-
-    return () => {
-      pingSound.stop();
-    };
-  }, [notifications, soundPlayed]);
 
   return (
     <li

@@ -72,7 +72,13 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
               if ("type" in ping) {
                 return <DateStamp data={ping.date} key={ping.date} />;
               }
-              return <PingContainer data={ping} key={ping.id} />;
+              return (
+                <PingContainer
+                  data={ping}
+                  key={ping.id}
+                  lastPing={initialData[initialData.length - 1] as FullPingType}
+                />
+              );
             }
           )
         : null}

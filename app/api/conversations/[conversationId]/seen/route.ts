@@ -27,15 +27,18 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
     if (!existingConversation)
       return new NextResponse("Resource not found", { status: 404 });
 
-    const lastMessage =
+    const lastPing =
       existingConversation.pings[existingConversation.pings.length - 1];
 
-    if (!lastMessage)
-      return new NextResponse("Message not found", { status: 404 });
+    if (!lastPing)
+      return new NextResponse("Ping not found", { status: 404 });
+
+    if (lastPing.receiverIds.length === 2)
+      return NextResponse.json("Conversation updated");
 
     const updatedPing = await prisma.pings.update({
       where: {
-        id: lastMessage.id,
+        id: lastPing.id,
       },
       data: {
         receiver: {

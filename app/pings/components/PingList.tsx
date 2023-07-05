@@ -11,6 +11,7 @@ import { PingBox } from "./PingBox";
 import { User } from "@prisma/client";
 import { usePusher } from "@/app/context/PusherContext";
 import { FullPingType } from "@/types/PingsType";
+import { notificationSound } from "@/app/utils/notificationSound";
 
 export interface PusherConversation {
   conversationId?: string;
@@ -27,7 +28,7 @@ export const PingList: React.FC<PingListProps> = ({
 }) => {
   const [currentConversations, setCurrentConversations] =
     useState(conversations);
-  const [isOpen] = useConversation();
+  const [isOpen, _conversationId] = useConversation();
   const pusherClient = usePusher();
 
   useEffect(() => {
@@ -51,18 +52,28 @@ export const PingList: React.FC<PingListProps> = ({
       conversationId,
       newPing,
     }) => {
-      setCurrentConversations((currentConversation) =>
-        currentConversation.map((convo) => {
-          if (convo.id === conversationId) {
-            return {
-              ...convo,
-              pings: [...convo.pings!, newPing],
-              lastPingAt: newPing.createdAt,
-            };
-          }
-          return convo;
-        })
-      );
+      const pingSound = notificationSound();
+      if (newPing) {
+        setCurrentConversations((currentConversation) =>
+          currentConversation.map((convo) => {
+            if (convo.id === conversationId) {
+              return {
+                ...convo,
+                pings: [...convo.pings!, newPing],
+                lastPingAt: newPing.createdAt,
+              };
+            }
+            return convo;
+          })
+        );
+        // Play sound only when the currentUser hasn't viewed the Ping
+        if (
+          newPing.receiverIds.indexOf(currentUser.id) === -1 &&
+          !_conversationId
+        ) {
+          pingSound.play();
+        }
+      }
     };
 
     pusherClient.bind("conversations:new", newConversationHandler);
@@ -73,7 +84,7 @@ export const PingList: React.FC<PingListProps> = ({
       pusherClient.unbind("conversations:new", newConversationHandler);
       pusherClient.unbind("conversations:update", updateConversation);
     };
-  }, [pusherClient]);
+  }, [pusherClient, currentUser, _conversationId]);
 
   return (
     <aside
