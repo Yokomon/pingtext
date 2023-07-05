@@ -30,7 +30,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newFriendShip);
   } catch (error) {
-    console.log({ error });
     return new NextResponse("INTERNAL SERVER ERROR", { status: 500 });
   } finally {
     await prismadb.$disconnect();
