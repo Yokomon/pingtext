@@ -2,6 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import clsx from "clsx";
+import { BsEyeSlashFill } from "@react-icons/all-files/bs/BsEyeSlashFill";
+import { BsEyeFill } from "@react-icons/all-files/bs/BsEyeFill";
 
 import { Avatar } from "@/app/components/Avatar";
 import { FullPingType } from "@/types/PingsType";
@@ -20,8 +22,10 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
 
   const isOwn = session?.data?.user?.email === data?.sender?.email;
 
+  const pingRead = data.receiverIds.length === 2;
+
   const container = clsx({
-    ["flex gap-3 p-3 px-6"]: true,
+    ["flex gap-3 p-2 px-6"]: true,
     ["justify-end"]: isOwn,
   });
 
@@ -30,7 +34,7 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
   });
 
   const body = clsx({
-    ["flex flex-col gap-2"]: true,
+    ["flex flex-col gap-1"]: true,
     ["items-end"]: isOwn,
   });
 
@@ -62,6 +66,12 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
             <VoiceMessage url={data.audioUrl!} />
           )}
         </div>
+        {isOwn &&
+          (pingRead ? (
+            <BsEyeFill size={13} className="text-sky-500" />
+          ) : (
+            <BsEyeSlashFill size={13} className="text-gray-400" />
+          ))}
       </div>
     </div>
   );

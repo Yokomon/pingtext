@@ -30,32 +30,72 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
     const lastPing =
       existingConversation.pings[existingConversation.pings.length - 1];
 
-    if (!lastPing)
+    if (!lastPing && existingConversation.lastPingAt !== null) {
       return new NextResponse("Ping not found", { status: 404 });
+    }
+
+    if (!lastPing && existingConversation.lastPingAt === null)
+      return NextResponse.json("Conversation started");
 
     if (lastPing.receiverIds.length === 2)
       return NextResponse.json("Conversation updated");
 
-    const updatedPing = await prisma.pings.update({
-      where: {
-        id: lastPing.id,
-      },
-      data: {
-        receiver: {
-          connect: {
-            id: currentUser.id,
+    if (
+      lastPing.senderId === currentUser.id &&
+      lastPing.receiverIds.length === 1
+    ) {
+      const updatedPing = await prisma.pings.update({
+        where: {
+          id: lastPing.id,
+        },
+        data: {
+          receiver: {
+            connect: {
+              id: currentUser.id,
+            },
           },
         },
+        include: {
+          sender: true,
+        },
+      });
+
+      await pusherServer.trigger("conversations", "conversations:update", {
+        newPing: updatedPing,
+        conversationId,
+      });
+
+      await pusherServer.trigger(conversationId, "ping:updated", updatedPing);
+
+      return NextResponse.json("Conversation updated");
+    }
+
+    const { count } = await prisma.pings.updateMany({
+      where: {
+        conversationId: conversationId,
       },
-      include: {
-        sender: true,
+      data: {
+        receiverIds: [currentUser.id, lastPing.senderId],
       },
     });
 
-    await pusherServer.trigger("conversations", "conversations:update", {
-      newPing: updatedPing,
-      conversationId,
-    });
+    if (count) {
+      const newPing = await prisma.pings.findFirst({
+        where: {
+          id: lastPing.id,
+        },
+        include: {
+          sender: true,
+        },
+      });
+
+      await pusherServer.trigger("conversations", "conversations:update", {
+        newPing: newPing,
+        conversationId,
+      });
+
+      await pusherServer.trigger(conversationId, "ping:updated", newPing);
+    }
 
     return NextResponse.json("Conversation updated!");
   } catch (error) {

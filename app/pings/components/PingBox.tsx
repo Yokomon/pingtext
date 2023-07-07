@@ -28,19 +28,19 @@ export const PingBox: React.FC<PingBoxProps> = ({
   const router = useRouter();
   const { unreadPings } = useGetUnreadPings(pings, currentUser);
 
-  const lastMessage = pings[pings.length - 1];
+  const lastPing = pings[pings.length - 1];
 
   const handleRedirect = () => {
     return router.push(`/pings/${conversationId}`);
   };
 
-  const getLastMessage = () => {
-    if (lastMessage) {
-      if (lastMessage.audioUrl) {
-        return <VoiceMessage url={lastMessage.audioUrl} pingList />;
+  const getLastPing = () => {
+    if (lastPing) {
+      if (lastPing.audioUrl) {
+        return <VoiceMessage url={lastPing.audioUrl} pingList />;
       }
-      if (lastMessage.body) {
-        return decryptMessage(lastMessage.body);
+      if (lastPing.body) {
+        return decryptMessage(lastPing.body);
       }
     }
 
@@ -67,7 +67,7 @@ export const PingBox: React.FC<PingBoxProps> = ({
               ["text-gray-700 dark:text-inherit"]: unreadPings,
             })}
           >
-            {getLastMessage()}
+            {getLastPing()}
           </div>
           {unreadPings ? (
             <span className="text-xs text-white bg-red-600 w-fit p-2 h-5 justify-center flex items-center rounded-full">
