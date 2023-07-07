@@ -25,35 +25,52 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
   const [_, conversationId] = useConversation();
 
   useEffect(() => {
-    if (!!initialData.length) {
-      axios.post(`/api/conversations/${conversationId}/seen`);
-    }
+    axios.post(`/api/conversations/${conversationId}/seen`);
+  }, [conversationId]);
+
+  useEffect(() => {
     setTimeout(() => {
       if (bodyRef.current && !!initialData.length) {
         bodyRef.current.scrollIntoView(true);
       }
     }, 100);
-  }, [initialData, conversationId]);
+  }, [initialData]);
 
   useEffect(() => {
     pusherClient.subscribe(conversationId as string);
 
-    const pingHandler: (_T: PusherConversation) => void = ({ newPing }) => {
+    const newPingHandler: (_T: PusherConversation) => void = ({ newPing }) => {
+      axios.post(`/api/conversations/${conversationId}/seen`);
+
       setInitialData((data) => {
         const hasTodayType = data.some(
           (item) => "type" in item && item.date === "Today"
         );
+
         const newData = hasTodayType
           ? [...data, newPing]
           : [...data, ...formatPingChats([newPing])];
+
         return newData;
       });
     };
 
-    pusherClient.bind("pings:new", pingHandler);
+    const updatePingHandler: (_T: FullPingType) => void = (ping) => {
+      setInitialData((initialData) =>
+        initialData.map((data) => {
+          if ("id" in data && data.id === ping.id) return ping;
+
+          return data;
+        })
+      );
+    };
+
+    pusherClient.bind("pings:new", newPingHandler);
+    pusherClient.bind("ping:updated", updatePingHandler);
 
     return () => {
-      pusherClient.unbind("pings:new", pingHandler);
+      pusherClient.unbind("pings:new", newPingHandler);
+      pusherClient.unbind("ping:updated", updatePingHandler);
       pusherClient.unsubscribe(conversationId as string);
     };
   }, [conversationId, pusherClient]);
@@ -72,13 +89,7 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
               if ("type" in ping) {
                 return <DateStamp data={ping.date} key={ping.date} />;
               }
-              return (
-                <PingContainer
-                  data={ping}
-                  key={ping.id}
-                  lastPing={initialData[initialData.length - 1] as FullPingType}
-                />
-              );
+              return <PingContainer data={ping} key={ping.id} />;
             }
           )
         : null}
