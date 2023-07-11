@@ -1,32 +1,41 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { useConversation } from "@/app/hooks/useConversation";
-import { formatPingChats } from "@/app/utils/formatDate";
 import { FullPingType } from "@/types/PingsType";
 import { DateStamp } from "./DateStamp";
 import { PingContainer } from "./PingContainer";
-import { usePusher } from "@/app/context/PusherContext";
-import { PusherConversation } from "../../components/PingList";
+import { User } from "@prisma/client";
+import { useInitialData } from "./hooks/useInitialData";
 
 interface BodyProps {
   pings: FullPingType[];
+  currentUser: User | null;
 }
 
-export const Body: React.FC<BodyProps> = ({ pings }) => {
-  const [initialData, setInitialData] = useState(formatPingChats(pings));
-
-  const pusherClient = usePusher();
-
+export const Body: React.FC<BodyProps> = ({ pings, currentUser }) => {
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const [_, conversationId] = useConversation();
 
+  const { initialData } = useInitialData({
+    pings,
+    conversationId: conversationId as string,
+  });
+
   useEffect(() => {
-    axios.post(`/api/conversations/${conversationId}/seen`);
-  }, [conversationId]);
+    if (!currentUser) return;
+
+    const lastPing = pings[pings.length - 1];
+    if (
+      lastPing.sender.id !== currentUser.id &&
+      lastPing.receiverIds.length !== 2
+    ) {
+      axios.post(`/api/conversations/${conversationId}/seen`);
+    }
+  }, [conversationId, pings, currentUser]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -35,45 +44,6 @@ export const Body: React.FC<BodyProps> = ({ pings }) => {
       }
     }, 100);
   }, [initialData]);
-
-  useEffect(() => {
-    pusherClient.subscribe(conversationId as string);
-
-    const newPingHandler: (_T: PusherConversation) => void = ({ newPing }) => {
-      axios.post(`/api/conversations/${conversationId}/seen`);
-
-      setInitialData((data) => {
-        const hasTodayType = data.some(
-          (item) => "type" in item && item.date === "Today"
-        );
-
-        const newData = hasTodayType
-          ? [...data, newPing]
-          : [...data, ...formatPingChats([newPing])];
-
-        return newData;
-      });
-    };
-
-    const updatePingHandler: (_T: FullPingType) => void = (ping) => {
-      setInitialData((initialData) =>
-        initialData.map((data) => {
-          if ("id" in data && data.id === ping.id) return ping;
-
-          return data;
-        })
-      );
-    };
-
-    pusherClient.bind("pings:new", newPingHandler);
-    pusherClient.bind("ping:updated", updatePingHandler);
-
-    return () => {
-      pusherClient.unbind("pings:new", newPingHandler);
-      pusherClient.unbind("ping:updated", updatePingHandler);
-      pusherClient.unsubscribe(conversationId as string);
-    };
-  }, [conversationId, pusherClient]);
 
   return (
     <div className="flex-1 h-full w-full overflow-y-auto bg-gray-50 dark:bg-black">
