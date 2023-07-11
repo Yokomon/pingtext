@@ -2,21 +2,14 @@
 
 import { BiMessageDetail } from "@react-icons/all-files/bi/BiMessageDetail";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
 
 import { SearchInput } from "@/app/components/inputs/SearchInput";
 import { FullConversationType } from "@/types/ConversationTypes";
 import { useConversation } from "@/app/hooks/useConversation";
 import { PingBox } from "./PingBox";
 import { User } from "@prisma/client";
-import { usePusher } from "@/app/context/PusherContext";
-import { FullPingType } from "@/types/PingsType";
-import { notificationSound } from "@/app/utils/notificationSound";
+import { useCurrentConversations } from "./hooks/useCurrentConversations";
 
-export interface PusherConversation {
-  conversationId?: string;
-  newPing: FullPingType;
-}
 interface PingListProps {
   conversations: FullConversationType[];
   currentUser: User;
@@ -26,65 +19,13 @@ export const PingList: React.FC<PingListProps> = ({
   conversations,
   currentUser,
 }) => {
-  const [currentConversations, setCurrentConversations] =
-    useState(conversations);
   const [isOpen, _conversationId] = useConversation();
-  const pusherClient = usePusher();
 
-  useEffect(() => {
-    pusherClient.subscribe("conversations");
-
-    const newConversationHandler: (_T: FullConversationType) => void = (
-      conversation: FullConversationType
-    ) => {
-      setCurrentConversations((currentConversations) => {
-        if (
-          currentConversations.some((convo) => convo.id === conversation.id)
-        ) {
-          return currentConversations;
-        }
-
-        return [...currentConversations, conversation];
-      });
-    };
-
-    const updateConversation: (_T: PusherConversation) => void = ({
-      conversationId,
-      newPing,
-    }) => {
-      const pingSound = notificationSound();
-      if (newPing) {
-        setCurrentConversations((currentConversation) =>
-          currentConversation.map((convo) => {
-            if (convo.id === conversationId) {
-              return {
-                ...convo,
-                pings: [...convo.pings!, newPing],
-                lastPingAt: newPing.createdAt,
-              };
-            }
-            return convo;
-          })
-        );
-        // Play sound only when the currentUser hasn't viewed the Ping
-        if (
-          newPing.receiverIds.indexOf(currentUser.id) === -1 &&
-          !_conversationId
-        ) {
-          pingSound.play();
-        }
-      }
-    };
-
-    pusherClient.bind("conversations:new", newConversationHandler);
-    pusherClient.bind("conversations:update", updateConversation);
-
-    return () => {
-      pusherClient.unsubscribe("conversations");
-      pusherClient.unbind("conversations:new", newConversationHandler);
-      pusherClient.unbind("conversations:update", updateConversation);
-    };
-  }, [pusherClient, currentUser, _conversationId]);
+  const { currentConversations } = useCurrentConversations({
+    conversations,
+    currentUser,
+    conversationId: _conversationId as string,
+  });
 
   return (
     <aside
