@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+import { enhanceGoogleImg } from "../utils/modifyGoogleImage";
 import prismadb from "../utils/prismadb";
 import { getCurrentUser } from "./getCurrentUser";
 
@@ -26,7 +28,17 @@ export async function getAllFriends() {
       },
     });
 
-    return friends.map((friend) => ({ ...friend, users: friend.users[0] }));
+    return friends.map((friend) => {
+      const currentFriend = friend.users[0];
+
+      return {
+        ...friend,
+        users: {
+          ...currentFriend,
+          image: enhanceGoogleImg(currentFriend.image),
+        },
+      };
+    });
   } catch (error) {
     new NextResponse("INTERNAL SERVER ERROR", { status: 500 });
     return null;
