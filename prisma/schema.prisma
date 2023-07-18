@@ -21,6 +21,7 @@ model User {
   updatedAt      DateTime  @updatedAt
   account        Account[]
   pings          Pings[]
+  calls          Call[]
 
   conversations    Conversation[] @relation(fields: [conversationsIds], references: [id])
   conversationsIds String[]       @db.ObjectId
@@ -34,6 +35,8 @@ model User {
 
   notification        Notification?
   notificationSenders Notification[] @relation("NotificationSenders")
+
+  callReceiver Call? @relation("CallReceiver")
 }
 
 model Account {
@@ -110,4 +113,12 @@ model Notification {
   friend                Friend?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+}
+
+model Call {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  caller         User   @relation(fields: [callerId], references: [id])
+  callerId       String @db.ObjectId
+  callReceiver   User   @relation("CallReceiver", fields: [callReceiverId], references: [id])
+  callReceiverId String @unique @db.ObjectId
 }

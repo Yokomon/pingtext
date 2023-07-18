@@ -7,5 +7,10 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/pings", "/friends", "/notifications"],
+  matcher: [
+    "/ping/:path*",
+    "/friends/:path*",
+    "/notifications/:path*",
+    "/calls/:path*",
+  ],
 };

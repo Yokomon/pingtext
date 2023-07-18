@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+import { enhanceGoogleImg } from "../utils/modifyGoogleImage";
 import prismadb from "../utils/prismadb";
 import getSession from "./getSession";
 
@@ -14,7 +16,12 @@ export const getCurrentUser = async () => {
 
     if (!currentUser) return null;
 
-    return currentUser;
+    const userData = {
+      ...currentUser,
+      image: enhanceGoogleImg(currentUser.image),
+    };
+
+    return userData as User;
   } catch (error) {
     return null;
   }

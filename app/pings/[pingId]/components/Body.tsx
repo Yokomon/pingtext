@@ -29,11 +29,14 @@ export const Body: React.FC<BodyProps> = ({ pings, currentUser }) => {
     if (!currentUser) return;
 
     const lastPing = pings[pings.length - 1];
-    if (
-      lastPing.sender.id !== currentUser.id &&
-      lastPing.receiverIds.length !== 2
-    ) {
-      axios.post(`/api/conversations/${conversationId}/seen`);
+
+    if (lastPing) {
+      if (
+        lastPing.sender.id !== currentUser.id &&
+        lastPing.receiverIds.length !== 2
+      ) {
+        axios.post(`/api/conversations/${conversationId}/seen`);
+      }
     }
   }, [conversationId, pings, currentUser]);
 

@@ -1,3 +1,4 @@
+import { enhanceGoogleImg } from "../utils/modifyGoogleImage";
 import prismadb from "../utils/prismadb";
 import { getCurrentUser } from "./getCurrentUser";
 
@@ -26,7 +27,10 @@ export default async function getOtherUsers() {
 
     if (otherUsers.length === 0) return [];
 
-    return otherUsers;
+    return otherUsers.map((user) => ({
+      ...user,
+      image: enhanceGoogleImg(user.image),
+    }));
   } catch (error) {
     return [];
   } finally {
