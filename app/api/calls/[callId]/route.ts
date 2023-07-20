@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { pusherServer } from "@/app/lib/pusher";
 import { NextResponse } from "next/server";
+import prismadb from '@/app/utils/prismadb'
 
 interface IParams {
   params: {
@@ -17,7 +18,7 @@ export async function POST(_: Request, { params }: IParams) {
       return new NextResponse("Invalid user session", { status: 401 });
 
     // Find existing call and initiate the call if it exists
-    const existingCall = await prisma.call.findFirst({
+    const existingCall = await prismadb.call.findFirst({
       where: {
         id: callId,
       },

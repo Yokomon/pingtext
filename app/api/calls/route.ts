@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { pusherServer } from "@/app/lib/pusher";
 import { NextResponse } from "next/server";
+import prismadb from "@/app/utils/prismadb";
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
     const { friendId } = await request.json();
 
     // Check if the call exists to avoid creation on each requests
-    const existingCall = await prisma.call.findFirst({
+    const existingCall = await prismadb.call.findFirst({
       where: {
         callerId: currentUser.id,
         callReceiverId: friendId,
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json(existingCall);
     }
 
-    const newCall = await prisma.call.create({
+    const newCall = await prismadb.call.create({
       data: {
         caller: {
           connect: {
