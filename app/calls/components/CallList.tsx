@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
+import { BsFillCameraVideoFill } from "@react-icons/all-files/bs/BsFillCameraVideoFill";
 import { MdCall } from "@react-icons/all-files/md/MdCall";
 
 import { SearchInput } from "@/app/components/inputs/SearchInput";
@@ -95,7 +96,7 @@ export const CallList = ({ friends, currentUser }: CallListProps) => {
                       {users.email}
                     </p>
                   </div>
-                  <MdCall
+                  <BsFillCameraVideoFill
                     onClick={() => handleCall(users.id)}
                     size={18}
                     className="text-sky-600 dark:text-sky-500 cursor-pointer"
