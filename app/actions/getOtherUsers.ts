@@ -32,6 +32,7 @@ export default async function getOtherUsers() {
       image: enhanceGoogleImg(user.image),
     }));
   } catch (error) {
+    console.log(`Get otherUsers error: ${error}`);
     return [];
   } finally {
     await prismadb.$disconnect();

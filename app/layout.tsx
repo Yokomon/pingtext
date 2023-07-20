@@ -2,12 +2,12 @@ import { Inter } from "next/font/google";
 
 import { AuthContext } from "./context/AuthContext";
 import { ToastContext } from "./context/ToastContext";
+import { PusherProvider } from "./context/PusherContext";
 
 import QueryProvider from "./utils/QueryProvider";
 
 import "./globals.css";
 import { NextThemeProvider } from "./providers/ThemeProvider";
-import { PusherProvider } from "./context/PusherContext";
 
 const inter = Inter({
   subsets: ["latin"],

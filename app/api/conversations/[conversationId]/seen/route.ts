@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { pusherServer } from "@/app/lib/pusher";
 import { NextResponse } from "next/server";
+import prismadb from '@/app/utils/prismadb'
 
 interface IParams {
   conversationId: string;
@@ -15,7 +16,7 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
     if (!conversationId)
       return new NextResponse("Invalid access key", { status: 400 });
 
-    const existingConversation = await prisma.conversation.findFirst({
+    const existingConversation = await prismadb.conversation.findFirst({
       where: {
         id: conversationId,
       },
@@ -44,7 +45,7 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
       lastPing.senderId === currentUser.id &&
       lastPing.receiverIds.length === 1
     ) {
-      const updatedPing = await prisma.pings.update({
+      const updatedPing = await prismadb.pings.update({
         where: {
           id: lastPing.id,
         },
@@ -70,7 +71,7 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
       return NextResponse.json("Conversation updated");
     }
 
-    const { count } = await prisma.pings.updateMany({
+    const { count } = await prismadb.pings.updateMany({
       where: {
         conversationId: conversationId,
       },
@@ -80,7 +81,7 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
     });
 
     if (count) {
-      const newPing = await prisma.pings.findFirst({
+      const newPing = await prismadb.pings.findFirst({
         where: {
           id: lastPing.id,
         },
@@ -99,6 +100,7 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
 
     return NextResponse.json("Conversation updated!");
   } catch (error) {
+    console.log(`Conversation seen error: ${error}`);
     return new NextResponse("An error occurred", { status: 500 });
   }
 }

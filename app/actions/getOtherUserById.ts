@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import { enhanceGoogleImg } from "../utils/modifyGoogleImage";
 import getSession from "./getSession";
+import prismadb from "@/app/utils/prismadb";
 
 export const getOtherUserById = async (id: string) => {
   const session = await getSession();
@@ -8,7 +9,7 @@ export const getOtherUserById = async (id: string) => {
   try {
     if (!session) return null;
 
-    const otherUser = await prisma.user.findUnique({
+    const otherUser = await prismadb.user.findUnique({
       where: {
         id,
       },
@@ -22,5 +23,7 @@ export const getOtherUserById = async (id: string) => {
     };
 
     return otherUserData as User;
-  } catch (error) {}
+  } catch (error) {
+    console.log(`Get otherUser by ID error: ${error}`);
+  }
 };

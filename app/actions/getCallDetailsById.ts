@@ -1,4 +1,5 @@
 import { getCurrentUser } from "./getCurrentUser";
+import prismadb from "@/app/utils/prismadb";
 
 export const getCallDetailsById = async (id: string) => {
   try {
@@ -6,7 +7,7 @@ export const getCallDetailsById = async (id: string) => {
 
     if (!currentUser) return null;
 
-    const callDetails = await prisma.call.findFirst({
+    const callDetails = await prismadb.call.findFirst({
       where: {
         id,
       },
@@ -20,6 +21,7 @@ export const getCallDetailsById = async (id: string) => {
 
     return callDetails;
   } catch (error) {
+    console.log(`Call details error: ${error}`);
     return null;
   }
 };

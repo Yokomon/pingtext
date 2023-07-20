@@ -38,7 +38,6 @@ export const Avatar: React.FC<AvatarProps> = ({
         {currentUser && "image" in currentUser && currentUser.image !== null ? (
           <div className="relative rounded-full overflow-hidden ring-1 dark:ring-0 dark:ring-offset-0 ring-offset-2 ring-sky-600 inline-block">
             <Image
-              unoptimized={true}
               width={imageWidth ?? 40}
               height={imageHeight ?? 40}
               src={currentUser.image}

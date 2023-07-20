@@ -11,6 +11,7 @@ import { usePusher } from "@/app/context/PusherContext";
 export const useRTCHooks = (roomId: string) => {
   const [enableCamera, setEnableCamera] = useState(true);
   const [enableMic, setEnableMic] = useState(true);
+  const [cameraStatus, setCameraStatus] = useState(true);
 
   const host = useRef(false);
 
@@ -24,7 +25,7 @@ export const useRTCHooks = (roomId: string) => {
   const userStream = useRef<MediaStream>();
 
   const userVideo = useRef<HTMLVideoElement>(null);
-  const otherUserVideo = useRef<HTMLVideoElement>(null);
+  const partnerVideo = useRef<HTMLVideoElement>(null);
 
   const ICE_SERVERS = {
     // you can add TURN servers here too
@@ -43,7 +44,7 @@ export const useRTCHooks = (roomId: string) => {
 
   const handleTrackEvent = (event: RTCTrackEvent) => {
     const stream = event.streams[0];
-    otherUserVideo.current!.srcObject = stream;
+    partnerVideo.current!.srcObject = stream;
   };
 
   const createPeerConnection = () => {
@@ -145,6 +146,13 @@ export const useRTCHooks = (roomId: string) => {
       }
     );
 
+    channelRef.current.bind(
+      "client-camerastatus",
+      ({ cameraStatus }: { cameraStatus: boolean }) => {
+        setCameraStatus(cameraStatus);
+      }
+    );
+
     return () => {
       if (channelRef.current) {
         pusherClient.unsubscribe(`presence-${roomId}`);
@@ -174,6 +182,12 @@ export const useRTCHooks = (roomId: string) => {
             if (host.current) {
               handleAnswerReceived(answer as RTCSessionDescriptionInit);
             }
+          }
+        );
+        channelRef.current.unbind(
+          "client-camerastatus",
+          ({ cameraStatus }: { cameraStatus: boolean }) => {
+            setCameraStatus(cameraStatus);
           }
         );
       }
@@ -224,9 +238,19 @@ export const useRTCHooks = (roomId: string) => {
   };
 
   const toggleMediaStream = (type: "video" | "audio", state: boolean) => {
-    userStream.current!.getTracks().forEach((track) => {
+    const enableMedia = (track: MediaStreamTrack) => (track.enabled = !state);
+
+    const triggerCameraStatus = (status: boolean) => {
+      channelRef.current?.trigger("client-camerastatus", {
+        cameraStatus: status,
+      });
+    };
+
+    triggerCameraStatus(!state);
+
+    userStream.current?.getTracks().forEach((track) => {
       if (track.kind === type) {
-        track.enabled = !state;
+        enableMedia(track);
       }
     });
   };
@@ -247,6 +271,7 @@ export const useRTCHooks = (roomId: string) => {
     enableCamera,
     enableMic,
     userVideo,
-    otherUserVideo,
+    partnerVideo,
+    cameraStatus,
   };
 };

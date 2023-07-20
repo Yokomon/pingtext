@@ -15,7 +15,7 @@ export const getConversationById = async (pingId: string) => {
         users: {
           where: {
             id: {
-              notIn: currentUser.id,
+              notIn: [currentUser.id],
             },
           },
         },
@@ -24,6 +24,7 @@ export const getConversationById = async (pingId: string) => {
 
     return conversation;
   } catch (error) {
+    console.log(`Get conversation by ID error: ${error}`);
     return null;
   }
 };
