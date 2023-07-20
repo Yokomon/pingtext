@@ -18,6 +18,7 @@ export const getPings = async (id: string) => {
 
     return pings;
   } catch (error) {
+    console.log(`Get Pings error: ${error}`);
     return [];
   }
 };

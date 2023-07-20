@@ -20,7 +20,7 @@ export const getConversations = async () => {
         users: {
           where: {
             email: {
-              notIn: currentUser.email,
+              notIn: [currentUser.email],
             },
           },
         },
@@ -30,6 +30,7 @@ export const getConversations = async () => {
 
     return userConversations;
   } catch (error) {
+    console.log(`Get all conversations error: ${error}`);
     return [];
   }
 };

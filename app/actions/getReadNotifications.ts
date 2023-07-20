@@ -39,6 +39,7 @@ export const getReadNotifications = async () => {
 
     return currentUserReadNotifications;
   } catch (error) {
+    console.log(`Get read notifications error: ${error}`);
     return [];
   } finally {
     await prismadb.$disconnect();

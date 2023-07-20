@@ -40,6 +40,7 @@ export async function getAllFriends() {
       };
     });
   } catch (error) {
+    console.log(`Get all friends error: ${error}`);
     new NextResponse("INTERNAL SERVER ERROR", { status: 500 });
     return null;
   } finally {
