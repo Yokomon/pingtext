@@ -8,10 +8,11 @@ import { useStore } from "../hooks/useStore";
 import useChannelList from "../hooks/useChannelList";
 
 interface AvatarProps {
-  currentUser: User | null;
+  currentUser?: User | null;
   removeBadge?: boolean;
   imageWidth?: number;
   imageHeight?: number;
+  loading?: boolean;
 }
 
 export const Avatar: React.FC<AvatarProps> = ({
@@ -19,6 +20,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   removeBadge,
   imageWidth,
   imageHeight,
+  loading,
 }) => {
   const members = useStore(useChannelList, (state) => state.members);
 
@@ -35,9 +37,14 @@ export const Avatar: React.FC<AvatarProps> = ({
     <div>
       <div className="relative flex justify-center items-center">
         {/* Check if current user and image exists */}
-        {currentUser && "image" in currentUser && currentUser.image !== null ? (
-          <div className="relative rounded-full overflow-hidden ring-1 dark:ring-0 dark:ring-offset-0 ring-offset-2 ring-sky-600 inline-block">
+        {loading ? (
+          <div className="relative animate-pulse rounded-full overflow-hidden ring-1 dark:ring-0 dark:ring-offset-0 ring-offset-2 ring-sky-600 inline-block h-12 w-12 bg-gray-200 dark:bg-gray-700" />
+        ) : currentUser &&
+          "image" in currentUser &&
+          currentUser.image !== null ? (
+          <div className=" relative rounded-full overflow-hidden ring-1 dark:ring-0 dark:ring-offset-0 ring-offset-2 ring-sky-600 inline-block">
             <Image
+              unoptimized
               width={imageWidth ?? 40}
               height={imageHeight ?? 40}
               src={currentUser.image}
@@ -56,7 +63,7 @@ export const Avatar: React.FC<AvatarProps> = ({
             ))}
           </div>
         )}
-        {!removeBadge ? (
+        {!removeBadge && !loading ? (
           isActive ? (
             <span className="absolute block bg-teal-400 right-1 top-7 rounded-full p-1 ring-1 dark:ring-0 dark:ring-offset-0 ring-white dark:ring-gray-400 ring-offset-2" />
           ) : (
