@@ -12,7 +12,7 @@ export default async function SideBar({ children }: SideBarProps) {
   const notifications = await getCurrentUserNotifications();
   return (
     <div className="h-full">
-      <ChannelStatus />
+      <ChannelStatus currentUser={currentUser} />
       <DesktopSideBar
         currentUser={currentUser!}
         notifications={notifications}
