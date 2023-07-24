@@ -14,8 +14,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
   const members = useStore(useChannelList, (state) => state.members);
-
-  const isOnline = members.has(otherUser.email);
+  const isUserOnline = members.has(otherUser.email);
 
   return (
     <div className="flex items-center p-4 h-20 justify-between border-b border-gray-100 dark:bg-neutral-900 dark:border-gray-50/10 w-full shadow-md">
@@ -27,10 +26,10 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
       </div>
       <div className="ml-5 flex flex-1 space-x-3">
         <Avatar currentUser={otherUser} />
-        <div className="relative">
+        <div>
           <h4 className="text-gray-700 dark:text-gray-200">{otherUser.name}</h4>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            {isOnline ? "Available" : "Offline"}
+            {isUserOnline ? "Available" : "Offline"}
           </p>
         </div>
       </div>
