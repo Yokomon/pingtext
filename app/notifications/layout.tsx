@@ -14,7 +14,6 @@ async function Layout({ children }: LayoutProps) {
   const currentUser = await getCurrentUser();
 
   return (
-    // @ts-ignore Server component
     <SideBar>
       <NotificationsList
         unReadNotifications={userNotifications}

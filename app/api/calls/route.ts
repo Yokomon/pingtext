@@ -26,6 +26,8 @@ export async function POST(request: Request) {
     if (existingCall) {
       await pusherServer.trigger("calls", "calls:new", {
         userId: friendId,
+        name: existingCall.caller.name,
+        callId: existingCall.id,
       });
 
       return NextResponse.json(existingCall);
@@ -51,6 +53,8 @@ export async function POST(request: Request) {
 
     await pusherServer.trigger("calls", "calls:new", {
       userId: friendId,
+      name: newCall.caller.name,
+      callId: newCall.id,
     });
 
     return NextResponse.json(newCall);

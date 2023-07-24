@@ -1,15 +1,10 @@
 "use client";
 
-import clsx from "clsx";
-import { BsCameraVideoFill } from "@react-icons/all-files/bs/BsCameraVideoFill";
-import { BsCameraVideoOffFill } from "@react-icons/all-files/bs/BsCameraVideoOffFill";
-import { PiMicrophoneFill } from "@react-icons/all-files/pi/PiMicrophoneFill";
-import { PiMicrophoneSlashFill } from "@react-icons/all-files/pi/PiMicrophoneSlashFill";
+import { User } from "@prisma/client";
 
 import { useRTCHooks } from "./hooks/useRTCHooks";
-import { Avatar } from "@/app/components/Avatar";
-import { User } from "@prisma/client";
 import { MixedCallerTypes } from "@/types/CallTypes";
+import { VideoBox } from "./VideoBox";
 
 interface VideoCallProps {
   callDetails: MixedCallerTypes;
@@ -30,89 +25,40 @@ export const VideoCall: React.FC<VideoCallProps> = ({
     enableCamera,
     enableMic,
     cameraStatus,
+    endVideoCall,
   } = useRTCHooks(callDetails.id);
 
   return (
-    <div className="p-3 relative h-full">
-      <div className="relative h-full">
-        <div
-          className={clsx({
-            ["absolute flex justify-center items-center w-full h-full"]: true,
-            ["hidden"]: cameraStatus,
-          })}
-        >
-          <Avatar
-            currentUser={otherUser}
-            removeBadge
-            imageHeight={130}
-            imageWidth={130}
-          />
-        </div>
-        <video
-          autoPlay
-          ref={partnerVideo}
-          className="w-full h-full border rounded-md"
-        />
-      </div>
+    <div className="p-3 relative h-3/4">
+      <VideoBox
+        cameraStatus={cameraStatus}
+        avatarUser={otherUser}
+        video={partnerVideo}
+        containerStyle={"relative h-full"}
+        avatarContainerStyle={
+          "absolute flex rounded-md border dark:border-gray-50/10 border-gray-50 justify-center bg-black items-center w-full h-full"
+        }
+        className="w-full h-full"
+      />
 
       <div className="w-full flex justify-end">
-        <div className="w-[27rem] h-60 absolute bottom-4 right-6">
-          <div
-            className={clsx({
-              ["absolute flex justify-center items-center pb-7 w-full h-full"]:
-                true,
-              ["hidden"]: enableCamera,
-            })}
-          >
-            <Avatar
-              currentUser={currentUser}
-              removeBadge
-              imageHeight={67}
-              imageWidth={67}
-            />
-          </div>
-          <video
-            ref={userVideo}
-            autoPlay
-            muted
-            className={clsx({
-              ["border-2 border-gray-300 rounded-md object-cover h-full w-full bg-black"]:
-                true,
-            })}
-          />
-          <div className="absolute bottom-0 flex items-center justify-center w-full space-x-3">
-            <div
-              onClick={toggleCamera}
-              className={clsx({
-                ["p-4 w-fit duration-500 rounded-full my-5 cursor-pointer"]:
-                  true,
-                [" bg-rose-50 hover:bg-rose-100"]: enableCamera,
-                ["bg-gray-50 hover:bg-gray-100"]: !enableCamera,
-              })}
-            >
-              {enableCamera ? (
-                <BsCameraVideoFill size={14} className="fill-rose-500" />
-              ) : (
-                <BsCameraVideoOffFill size={14} className="fill-gray-400" />
-              )}
-            </div>
-            <div
-              onClick={toggleMic}
-              className={clsx({
-                ["p-3 w-fit duration-500 rounded-full my-5 cursor-pointer"]:
-                  true,
-                [" bg-rose-50 hover:bg-rose-100"]: enableMic,
-                ["bg-gray-50 hover:bg-gray-100"]: !enableMic,
-              })}
-            >
-              {enableMic ? (
-                <PiMicrophoneFill size={14} className="fill-rose-500" />
-              ) : (
-                <PiMicrophoneSlashFill size={14} className="fill-gray-400" />
-              )}
-            </div>
-          </div>
-        </div>
+        <VideoBox
+          containerStyle="w-[27rem] h-60 absolute bottom-4 right-6"
+          avatarContainerStyle="absolute flex justify-center items-center pb-7 w-full h-full border border-gray-50/10 rounded-md bg-black"
+          className="h-full w-full object-cover border border-gray-50/10 rounded-md"
+          video={userVideo}
+          avatarUser={currentUser}
+          avatarHeight={67}
+          avatarWidth={67}
+          cameraStatus={enableCamera}
+          userActions={{
+            toggleCamera,
+            toggleMic,
+            enableCamera,
+            enableMic,
+          }}
+          endVideoCall={endVideoCall}
+        />
       </div>
     </div>
   );

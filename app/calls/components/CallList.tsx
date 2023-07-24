@@ -1,7 +1,6 @@
 "use client";
 
 import clsx from "clsx";
-import { useEffect } from "react";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -11,21 +10,13 @@ import { MdCall } from "@react-icons/all-files/md/MdCall";
 import { SearchInput } from "@/app/components/inputs/SearchInput";
 import { AllFriends } from "@/types/UserTypes";
 import { Avatar } from "@/app/components/Avatar";
-import { usePusher } from "@/app/context/PusherContext";
-import { User } from "@prisma/client";
-
-type NewCall = {
-  userId: string;
-};
 
 interface CallListProps {
   friends: AllFriends[] | null;
-  currentUser: User | null;
 }
 
-export const CallList = ({ friends, currentUser }: CallListProps) => {
+export const CallList = ({ friends }: CallListProps) => {
   const router = useRouter();
-  const pusherClient = usePusher();
   const params = useParams();
 
   const isOpen = !!params?.callId;
@@ -42,23 +33,6 @@ export const CallList = ({ friends, currentUser }: CallListProps) => {
   const handleCall = (friendId: string) => {
     callMutation.mutate({ friendId });
   };
-
-  // This is for ringing the second user/receiver
-  useEffect(() => {
-    pusherClient.subscribe("calls");
-
-    const handleNewCall = ({ userId }: NewCall) => {
-      if (userId === currentUser?.id) {
-        console.log("I was hit");
-      }
-    };
-
-    pusherClient.bind("calls:new", handleNewCall);
-
-    return () => {
-      pusherClient.unbind("calls:new", handleNewCall);
-    };
-  }, [pusherClient, currentUser]);
 
   return (
     <div>

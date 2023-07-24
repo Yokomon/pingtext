@@ -11,7 +11,6 @@ async function Layout({ children }: LayoutProps) {
   const userFriends = await getAllFriends();
   const otherUsers = await getOtherUsers();
   return (
-    // @ts-ignore
     <SideBar>
       <FriendsList userFriends={userFriends!} otherUsers={otherUsers} />
       {children}

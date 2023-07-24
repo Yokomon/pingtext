@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { usePusher } from "@/app/context/PusherContext";
-import { notificationSound } from "@/app/utils/notificationSound";
+import { notificationSound } from "@/app/utils/sounds";
 import { FullConversationType } from "@/types/ConversationTypes";
 import { User } from "@prisma/client";
 import { PusherConversation } from "../types";

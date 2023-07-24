@@ -10,7 +10,7 @@ export function useChannel() {
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
 
   useEffect(() => {
-    const channel = pusherClient.subscribe("presence-messenger");
+    const channel = pusherClient.subscribe("presence-pingtext");
     setActiveChannel(channel);
 
     channel.bind("pusher:subscription_succeeded", (members: Members) => {
@@ -33,7 +33,7 @@ export function useChannel() {
 
     return () => {
       if (activeChannel) {
-        pusherClient.unsubscribe("presence-messenger");
+        pusherClient.unsubscribe("presence-pingtext");
         pusherClient.unbind_all();
         pusherClient.disconnect();
 
