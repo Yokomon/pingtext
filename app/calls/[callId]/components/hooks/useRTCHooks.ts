@@ -11,7 +11,7 @@ import { usePusher } from "@/app/context/PusherContext";
 export const useRTCHooks = (roomId: string) => {
   const [enableCamera, setEnableCamera] = useState(true);
   const [enableMic, setEnableMic] = useState(true);
-  const [cameraStatus, setCameraStatus] = useState(true);
+  const [cameraStatus, setCameraStatus] = useState(false);
 
   const host = useRef(false);
 
@@ -45,6 +45,22 @@ export const useRTCHooks = (roomId: string) => {
   const handleTrackEvent = (event: RTCTrackEvent) => {
     const stream = event.streams[0];
     partnerVideo.current!.srcObject = stream;
+
+    const isPartnerVideoEnabled = partnerVideo
+      .current!.srcObject.getTracks()
+      .some((track) => track.kind === "video" && track.enabled);
+
+    if (isPartnerVideoEnabled) {
+      setCameraStatus(true);
+      channelRef.current!.trigger("client-camerastatus", {
+        cameraStatus: true,
+      });
+    } else {
+      setCameraStatus(false);
+      channelRef.current!.trigger("client-camerastatus", {
+        cameraStatus: false,
+      });
+    }
   };
 
   const createPeerConnection = () => {
@@ -73,6 +89,22 @@ export const useRTCHooks = (roomId: string) => {
         channelRef.current?.trigger("client-answer", answer);
       })
       .catch((_) => toast.error("An error occurred with RTC connection!"));
+  };
+
+  const handlePartnerLeaving = () => {
+    host.current = true;
+    if (partnerVideo.current?.srcObject) {
+      (partnerVideo.current.srcObject as MediaStream)
+        .getTracks()
+        .forEach((track) => track.stop());
+    }
+
+    if (rtcConnection.current) {
+      rtcConnection.current.ontrack = null;
+      rtcConnection.current.onicecandidate = null;
+      rtcConnection.current.close();
+      rtcConnection.current = null;
+    }
   };
 
   const initiateCall = () => {
@@ -153,6 +185,8 @@ export const useRTCHooks = (roomId: string) => {
       }
     );
 
+    channelRef.current.bind("pusher:member_removed", handlePartnerLeaving);
+
     return () => {
       if (channelRef.current) {
         pusherClient.unsubscribe(`presence-${roomId}`);
@@ -189,6 +223,10 @@ export const useRTCHooks = (roomId: string) => {
           ({ cameraStatus }: { cameraStatus: boolean }) => {
             setCameraStatus(cameraStatus);
           }
+        );
+        channelRef.current.unbind(
+          "pusher:member_removed",
+          handlePartnerLeaving
         );
       }
     };
@@ -246,13 +284,36 @@ export const useRTCHooks = (roomId: string) => {
       });
     };
 
-    triggerCameraStatus(!state);
+    if (type === "video") {
+      triggerCameraStatus(!state);
+    }
 
     userStream.current?.getTracks().forEach((track) => {
       if (track.kind === type) {
         enableMedia(track);
       }
     });
+  };
+
+  const endVideoCall = () => {
+    if (userVideo.current!.srcObject) {
+      (userVideo.current!.srcObject as MediaStream)
+        .getTracks()
+        .forEach((track) => track.stop());
+    }
+    if (partnerVideo.current!.srcObject) {
+      (partnerVideo.current!.srcObject as MediaStream)
+        .getTracks()
+        .forEach((track) => track.stop());
+    }
+
+    if (rtcConnection.current) {
+      rtcConnection.current.ontrack = null;
+      rtcConnection.current.onicecandidate = null;
+      rtcConnection.current.close();
+      rtcConnection.current = null;
+    }
+    router.push("/calls");
   };
 
   const toggleMic = () => {
@@ -273,5 +334,6 @@ export const useRTCHooks = (roomId: string) => {
     userVideo,
     partnerVideo,
     cameraStatus,
+    endVideoCall,
   };
 };
