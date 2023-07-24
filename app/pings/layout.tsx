@@ -17,7 +17,6 @@ export default async function RootLayout({
   const currentUser = await getCurrentUser();
 
   return (
-    //@ts-ignore Server component
     <SideBar>
       <div className="h-full">
         <PingList
