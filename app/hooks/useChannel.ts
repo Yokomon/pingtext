@@ -34,9 +34,6 @@ export function useChannel() {
     return () => {
       if (activeChannel) {
         pusherClient.unsubscribe("presence-pingtext");
-        pusherClient.unbind_all();
-        pusherClient.disconnect();
-
         setActiveChannel(null);
       }
     };
