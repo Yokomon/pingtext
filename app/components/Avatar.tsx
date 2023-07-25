@@ -51,6 +51,7 @@ export const Avatar: React.FC<AvatarProps> = ({
               alt={"avatar"}
               priority
               quality={100}
+              referrerPolicy="no-referrer"
             />
           </div>
         ) : (
