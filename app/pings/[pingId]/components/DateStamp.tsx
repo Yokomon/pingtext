@@ -1,10 +1,16 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+
 interface DateStampProps {
   data: string | null;
 }
 
 export const DateStamp: React.FC<DateStampProps> = ({ data }) => {
+  const session = useSession();
+
+  if (!session.data) return null;
+
   return (
     <div className="relative flex flex-col items-center">
       <div className="my-10 px-6 border-b border-gray-300 dark:border-gray-50/10 w-11/12" />
