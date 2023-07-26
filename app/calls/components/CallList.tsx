@@ -38,7 +38,7 @@ export const CallList = ({ friends }: CallListProps) => {
     <div>
       <aside
         className={clsx({
-          ["inset-0 lg:block lg:pl-20 fixed border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4 lg:w-[27rem]"]:
+          ["inset-0 lg:block dark:bg-neutral-900 lg:pl-20 fixed border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4 lg:w-[27rem]"]:
             true,
           ["hidden"]: isOpen,
         })}
@@ -61,7 +61,7 @@ export const CallList = ({ friends }: CallListProps) => {
               friends.map(({ users }) => (
                 <div
                   key={users.id}
-                  className="flex justify-between items-center my-5"
+                  className="flex justify-between items-center my-5 space-x-4"
                 >
                   <Avatar currentUser={users} />
                   <div className="h-full relative flex flex-col flex-1 mx-3 space-y-1 text-gray-700 dark:text-gray-300">

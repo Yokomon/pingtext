@@ -74,7 +74,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
         primaryAction={createPingFriend}
         isLoading={mutation.isLoading}
       />
-      <aside className="lg:pl-20 fixed inset-0 lg:w-[27rem] border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4">
+      <aside className="lg:pl-20 fixed dark:bg-neutral-900 inset-0 lg:w-[27rem] border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4">
         <section className="px-5 pr-1">
           <h1 className="text-3xl mb-5 text-sky-600 font-semibold tracking-wide">
             Friends

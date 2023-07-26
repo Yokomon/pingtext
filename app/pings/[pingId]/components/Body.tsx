@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
 
 import { useConversation } from "@/app/hooks/useConversation";
 import { FullPingType } from "@/types/PingsType";
@@ -16,6 +17,7 @@ interface BodyProps {
 }
 
 export const Body: React.FC<BodyProps> = ({ pings, currentUser }) => {
+  const session = useSession();
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const [_, conversationId] = useConversation();
@@ -41,15 +43,17 @@ export const Body: React.FC<BodyProps> = ({ pings, currentUser }) => {
   }, [conversationId, pings, currentUser]);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (bodyRef.current && !!initialData.length) {
-        bodyRef.current.scrollIntoView(true);
-      }
-    }, 100);
-  }, [initialData]);
+    // Scroll the view only when authenticated
+    if (bodyRef.current && session.status === "authenticated") {
+      bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+    }
+  }, [initialData, session]);
 
   return (
-    <div className="flex-1 h-full w-full overflow-y-auto bg-gray-50 dark:bg-black">
+    <div
+      className="flex-1 h-full w-full overflow-y-auto bg-gray-50 dark:bg-black pb-8"
+      ref={bodyRef}
+    >
       <div className="items-center justify-center flex">
         <p className="text-= text-gray-700 dark:text-gray-200 cursor-pointer hover:bg-transparent duration-500 w-fit rounded-md text-xs p-2.5 bg-gray-200 dark:bg-sky-500 my-3 ring-1 ring-gray-400 dark:ring-sky-600 shadow-sm">
           Pings are encrypted and secure
@@ -66,7 +70,6 @@ export const Body: React.FC<BodyProps> = ({ pings, currentUser }) => {
             }
           )
         : null}
-      <div ref={bodyRef} className="pt-12" />
     </div>
   );
 };
