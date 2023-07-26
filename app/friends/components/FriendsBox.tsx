@@ -41,7 +41,7 @@ export const FriendsBox: React.FC<FriendsBoxProps> = ({
   };
 
   return (
-    <div className="w-full flex items-start my-6 space-x-3">
+    <div className="w-full flex items-start my-6 space-x-4">
       <Avatar currentUser={user} />
       <div className="relative w-full">
         <div className={"flex items-center justify-between"}>

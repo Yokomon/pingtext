@@ -50,20 +50,21 @@ export const PingBox: React.FC<PingBoxProps> = ({
   return (
     <div
       onClick={handleRedirect}
-      className={
-        "flex my-3 w-full cursor-pointer hover:bg-gray-100 hover:text-black text-gray-700 dark:text-white dark:hover:text-gray-800 p-3 duration-300 rounded-md space-x-2 items-center"
-      }
+      className="flex my-3 w-full group cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-50/95 hover:text-black text-gray-700 dark:text-white dark:hover:text-gray-800 p-3 duration-300 rounded-md space-x-4 items-center"
     >
       <Avatar currentUser={otherUser} />
       <div className="min-w-0 w-full">
         <div className="flex items-start justify-between w-full mb-1">
-          <h3 className="text-sm">{otherUser.name}</h3>
+          <h3 className="text-sm group-hover:text-gray-900">
+            {otherUser.name}
+          </h3>
           <p className="text-xs mt-0.5">{formatDate(lastPingAt)}</p>
         </div>
         <div className="flex justify-between items-center">
           <div
             className={clsx({
-              ["truncate w-40 text-sm text-gray-400"]: true,
+              ["truncate w-40 text-sm text-gray-300 group-hover:text-gray-700"]:
+                true,
               ["text-gray-700 dark:text-inherit"]: unreadPings,
             })}
           >

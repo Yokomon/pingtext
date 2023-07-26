@@ -68,7 +68,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           isActive ? (
             <span className="absolute block bg-teal-400 right-1 top-7 rounded-full p-1 ring-1 dark:ring-0 dark:ring-offset-0 ring-white dark:ring-gray-400 ring-offset-2" />
           ) : (
-            <span className="absolute block bg-slate-500 right-1 top-7 rounded-full p-1 ring-1 dark:ring-0 dark:ring-offset-0 ring-white dark:ring-gray-400 ring-offset-2" />
+            <span className="absolute block bg-slate-500 right-0 top-7 rounded-full p-1 ring-1 dark:ring-offset-2 ring-white dark:ring-gray-400 ring-offset-2" />
           )
         ) : null}
       </div>

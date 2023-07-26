@@ -9,6 +9,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { HiOutlineDotsHorizontal } from "@react-icons/all-files/hi/HiOutlineDotsHorizontal";
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
+import { FiTrash2 } from "@react-icons/all-files/fi/FiTrash2";
+import { AiOutlineClear } from "@react-icons/all-files/ai/AiOutlineClear";
 
 import { Avatar } from "@/app/components/Avatar";
 import { User } from "@prisma/client";
@@ -55,48 +57,72 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
           </p>
         </div>
       </div>
-      <Popover className="relative">
-        {({ open }) => (
-          <>
-            <Popover.Button
-              className={clsx({
-                ["p-2 rounded-full hover:bg-sky-100 duration-500 focus:outline-sky-200 text-gray-500 hover:text-sky-600 cursor-pointer"]:
-                  true,
-                ["hover:!text-sky-700 hover:!bg-sky-300"]: open,
-              })}
-            >
-              <HiOutlineDotsHorizontal size={26} aria-hidden />
-            </Popover.Button>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-300"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel className="absolute max-w-sm right-1/2 z-10 my-4">
-                <div className="overflow-hidden shadow-md ring-1 ring-opacity-10 ring-black rounded-md">
-                  <div className="relative bg-white h-32 w-48">
-                    <ul className="flex flex-col p-2 px-3 list-none">
-                      <li
-                        onClick={() => handleCall(otherUser.id)}
-                        className="flex items-center p-2 cursor-pointer rounded-lg hover:bg-sky-100"
-                      >
-                        <h4 className="flex-1 text-base">
-                          Call {otherUser.name}
-                        </h4>
-                        <BsCameraVideoFill size={18} className="fill-sky-600" />
-                      </li>
-                    </ul>
+      <div className="flex items-center space-x-8">
+        <div
+          onClick={() => handleCall(otherUser.id)}
+          className="p-3 hover:dark:bg-sky-50 hover:bg-sky-100 cursor-pointer rounded-full duration-500 hidden xs:block"
+        >
+          <BsCameraVideoFill size={20} className="fill-sky-600" />
+        </div>
+        <Popover className="relative">
+          {({ open }) => (
+            <>
+              <Popover.Button
+                className={clsx({
+                  ["p-2 rounded-full hover:bg-sky-100 duration-500 focus:outline-sky-200 text-gray-500 hover:text-sky-600 cursor-pointer"]:
+                    true,
+                  ["hover:!text-sky-700 hover:!bg-sky-300"]: open,
+                })}
+              >
+                <HiOutlineDotsHorizontal size={26} aria-hidden />
+              </Popover.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-300"
+                enterFrom="opacity-0 translate-y-1"
+                enterTo="opacity-100 translate-y-0"
+                leave="transition ease-in duration-150"
+                leaveFrom="opacity-100 translate-y-0"
+                leaveTo="opacity-0 translate-y-1"
+              >
+                <Popover.Panel className="absolute max-w-sm right-1/2 z-10 my-4">
+                  <div className="overflow-hidden shadow-md ring-1 ring-opacity-10 ring-black rounded-md">
+                    <div className="relative bg-white w-52">
+                      <ul className="flex flex-col p-3 py-4 list-none duration-500 text-black">
+                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-sky-100">
+                          <h5 className="flex-1 text-sm">View profile</h5>
+                        </li>
+                        <li
+                          onClick={() => handleCall(otherUser.id)}
+                          className="flex xs:hidden items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-sky-100"
+                        >
+                          <h5 className="flex-1 text-sm">Video call</h5>
+                          <BsCameraVideoFill
+                            size={19}
+                            className="fill-sky-600"
+                          />
+                        </li>
+                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-rose-100">
+                          <h5 className="flex-1 text-sm text-rose-400">
+                            Clear ping
+                          </h5>
+                          <AiOutlineClear className="text-rose-400" size={19} />
+                        </li>
+                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-rose-100">
+                          <h5 className="flex-1 text-sm text-rose-500">
+                            Delete ping
+                          </h5>
+                          <FiTrash2 className="text-rose-400" size={19} />
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              </Popover.Panel>
-            </Transition>
-          </>
-        )}
-      </Popover>
+                </Popover.Panel>
+              </Transition>
+            </>
+          )}
+        </Popover>
+      </div>
     </div>
   );
 };
