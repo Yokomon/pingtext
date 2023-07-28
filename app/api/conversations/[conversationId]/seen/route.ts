@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
 import { pusherServer } from "@/app/lib/pusher";
 import { NextResponse } from "next/server";
-import prismadb from '@/app/utils/prismadb'
+import prismadb from "@/app/utils/prismadb";
 
 interface IParams {
   conversationId: string;
@@ -66,7 +66,11 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
         conversationId,
       });
 
-      await pusherServer.trigger(conversationId, "ping:updated", updatedPing);
+      await pusherServer.trigger(
+        `presence-${conversationId}`,
+        "ping:updated",
+        updatedPing
+      );
 
       return NextResponse.json("Conversation updated");
     }
@@ -95,7 +99,11 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
         conversationId,
       });
 
-      await pusherServer.trigger(conversationId, "ping:updated", newPing);
+      await pusherServer.trigger(
+        `presence-${conversationId}`,
+        "ping:updated",
+        newPing
+      );
     }
 
     return NextResponse.json("Conversation updated!");
