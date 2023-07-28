@@ -6,7 +6,7 @@ import axios from "axios";
 import { Popover, Transition } from "@headlessui/react";
 import { BsCameraVideoFill } from "@react-icons/all-files/bs/BsCameraVideoFill";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { HiOutlineDotsHorizontal } from "@react-icons/all-files/hi/HiOutlineDotsHorizontal";
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
 import { FiTrash2 } from "@react-icons/all-files/fi/FiTrash2";
@@ -23,6 +23,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
   const router = useRouter();
+  const params = useParams();
 
   const members = useStore(useChannelList, (state) => state.members);
   const isUserOnline = members.has(otherUser.email);
@@ -36,9 +37,18 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
     },
   });
 
+  const clearPingsMutation = useMutation({
+    mutationFn: (values: { conversationId: string }) => {
+      return axios.put(`/api/pings`, values);
+    },
+  });
+
   const handleCall = (friendId: string) => {
     callMutation.mutate({ friendId });
   };
+
+  const clearAllPings = (conversationId: string) =>
+    clearPingsMutation.mutate({ conversationId });
 
   return (
     <div className="flex items-center p-4 h-20 justify-between border-b border-gray-100 dark:bg-neutral-900 dark:border-gray-50/10 w-full shadow-sm">
@@ -48,8 +58,10 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
           className="hover:text-sky-600 cursor-pointer text-gray-500"
         />
       </div>
-      <div className="ml-5 flex flex-1 space-x-3">
-        <Avatar currentUser={otherUser} />
+      <div className="ml-5 flex flex-1 space-x-3 items-center">
+        <div className="relative w-9">
+          <Avatar currentUser={otherUser} />
+        </div>
         <div>
           <h4 className="text-gray-700 dark:text-gray-200">{otherUser.name}</h4>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -57,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
           </p>
         </div>
       </div>
-      <div className="flex items-center space-x-8">
+      <div className="flex items-center space-x-6">
         <div
           onClick={() => handleCall(otherUser.id)}
           className="p-3 hover:dark:bg-sky-50 hover:bg-sky-100 cursor-pointer rounded-full duration-500 hidden xs:block"
@@ -65,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
           <BsCameraVideoFill size={20} className="fill-sky-600" />
         </div>
         <Popover className="relative">
-          {({ open }) => (
+          {({ open, close }) => (
             <>
               <Popover.Button
                 className={clsx({
@@ -96,23 +108,31 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
                           onClick={() => handleCall(otherUser.id)}
                           className="flex xs:hidden items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-sky-100"
                         >
-                          <h5 className="flex-1 text-sm">Video call</h5>
+                          <h5 className="flex-1 text-sm tracking-wide">
+                            Video call
+                          </h5>
                           <BsCameraVideoFill
                             size={19}
                             className="fill-sky-600"
                           />
                         </li>
-                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-rose-100">
-                          <h5 className="flex-1 text-sm text-rose-400">
-                            Clear ping
+                        <li
+                          className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-rose-100"
+                          onClick={() => {
+                            clearAllPings(params?.pingId as string);
+                            close();
+                          }}
+                        >
+                          <h5 className="flex-1 text-sm text-rose-500 tracking-wide">
+                            Clear pings
                           </h5>
-                          <AiOutlineClear className="text-rose-400" size={19} />
+                          <AiOutlineClear className="text-rose-500" size={19} />
                         </li>
                         <li className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-rose-100">
-                          <h5 className="flex-1 text-sm text-rose-500">
+                          <h5 className="flex-1 text-sm text-rose-500 tracking-wide">
                             Delete ping
                           </h5>
-                          <FiTrash2 className="text-rose-400" size={19} />
+                          <FiTrash2 className="text-rose-500" size={19} />
                         </li>
                       </ul>
                     </div>

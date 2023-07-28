@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from "react";
+import { Members } from "pusher-js";
 import axios from "axios";
-import { useEffect, useState } from "react";
 
 import { usePusher } from "@/app/context/PusherContext";
 import { formatPingChats } from "@/app/utils/formatDate";
@@ -14,14 +15,40 @@ interface IProps {
 export const useInitialData = ({ pings, conversationId }: IProps) => {
   const [initialData, setInitialData] = useState(formatPingChats(pings));
 
+  const pingMembers = useRef<Set<string>>();
+
   const pusherClient = usePusher();
 
   useEffect(() => {
-    pusherClient.subscribe(conversationId as string);
+    const channel = pusherClient.subscribe(`presence-${conversationId}`);
+
+    channel.bind("pusher:subscription_succeeded", (members: Members) => {
+      const initialMembers = new Set<string>();
+      const lastPing = pings[pings.length - 1];
+
+      if (
+        lastPing?.sender.email !== members.me.id &&
+        lastPing?.receiverIds.length !== 2
+      ) {
+        axios.post(`/api/conversations/${conversationId}/seen`);
+      }
+
+      members.each((member: Record<string, any>) => {
+        initialMembers.add(member.id);
+      });
+
+      pingMembers.current = initialMembers;
+    });
+
+    channel.bind("pusher:member_added", (member: Record<string, any>) => {
+      pingMembers.current?.add(member.id);
+    });
+
+    channel.bind("pusher:member_removed", (member: Record<string, any>) => {
+      pingMembers.current?.delete(member.id);
+    });
 
     const newPingHandler: (_T: PusherConversation) => void = ({ newPing }) => {
-      axios.post(`/api/conversations/${conversationId}/seen`);
-
       setInitialData((data) => {
         const hasTodayType = data.some(
           (item) => "type" in item && item.date === "Today"
@@ -33,6 +60,8 @@ export const useInitialData = ({ pings, conversationId }: IProps) => {
 
         return newData;
       });
+
+      axios.post(`/api/conversations/${conversationId}/seen`);
     };
 
     const updatePingHandler: (_T: FullPingType) => void = (ping) => {
@@ -63,9 +92,9 @@ export const useInitialData = ({ pings, conversationId }: IProps) => {
     return () => {
       pusherClient.unbind("pings:new", newPingHandler);
       pusherClient.unbind("ping:updated", updatePingHandler);
-      pusherClient.unsubscribe(conversationId as string);
+      pusherClient.unsubscribe(`presence-${conversationId}`);
     };
-  }, [conversationId, pusherClient]);
+  }, [conversationId, pings, pusherClient]);
 
   return { initialData };
 };

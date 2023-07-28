@@ -16,6 +16,12 @@ export const getPings = async (id: string) => {
       },
     });
 
+    const filtered = pings.filter((ping) => ping.clearedIds.length === 0);
+
+    if (filtered && filtered[0].senderId !== currentUser.id) {
+      return filtered;
+    }
+
     return pings;
   } catch (error) {
     console.log(`Get Pings error: ${error}`);

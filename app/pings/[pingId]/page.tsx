@@ -5,7 +5,6 @@ import { getPings } from "@/app/actions/getPings";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { Body } from "./components/Body";
-import { getCurrentUser } from "@/app/actions/getCurrentUser";
 
 interface IParams {
   params: {
@@ -16,7 +15,6 @@ interface IParams {
 export default async function PingHomePage({ params }: IParams) {
   const conversation = await getConversationById(params.pingId);
   const pings = await getPings(params.pingId);
-  const currentUser = await getCurrentUser();
 
   // Redirect users if there is no conversation
   if (!conversation) redirect("/pings");
@@ -27,7 +25,7 @@ export default async function PingHomePage({ params }: IParams) {
     <div className="lg:pl-[22rem] h-full">
       <div className="flex h-full flex-col">
         <Header otherUser={otherUser} />
-        <Body pings={pings} currentUser={currentUser} />
+        <Body pings={pings} />
         <Footer conversation={conversation} />
       </div>
     </div>

@@ -59,8 +59,11 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
           ))}
         </ul>
       </nav>
-      <nav className="flex flex-col space-y-5 items-center justify-center mt-auto">
-        <ul role={"list"} className="space-y-5">
+      <nav className="mt-auto">
+        <ul
+          role={"list"}
+          className="space-y-5 flex flex-col justify-center items-center"
+        >
           <DesktopItem
             label="Notifications"
             path="/notifications"
@@ -68,7 +71,7 @@ export const DesktopSideBar: React.FC<DesktopSideBarProps> = ({
             active={pathname === "/notifications"}
             notifications={notifications}
           />
-          <li>
+          <li className="w-9">
             <Avatar currentUser={currentUser} />
           </li>
           <DesktopItem

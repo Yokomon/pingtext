@@ -133,8 +133,6 @@ export const useRTCHooks = (roomId: string) => {
   }, [roomId]);
 
   useEffect(() => {
-    pusherClient.subscribe(roomId);
-
     channelRef.current = pusherClient.subscribe(
       `presence-${roomId}`
     ) as PresenceChannel;
