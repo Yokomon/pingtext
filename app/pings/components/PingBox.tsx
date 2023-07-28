@@ -63,7 +63,7 @@ export const PingBox: React.FC<PingBoxProps> = ({
         <div className="flex justify-between items-center">
           <div
             className={clsx({
-              ["truncate w-40 text-sm text-gray-300 group-hover:text-gray-700"]:
+              ["truncate w-40 text-sm text-gray-400 group-hover:text-gray-500"]:
                 true,
               ["text-gray-700 dark:text-inherit"]: unreadPings,
             })}

@@ -30,6 +30,7 @@ export const PingContainer: React.FC<PingContainerProps> = ({ data }) => {
   });
 
   const avatar = clsx({
+    ["w-9"]: true,
     ["order-1"]: isOwn,
   });
 
