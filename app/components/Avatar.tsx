@@ -45,7 +45,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           <div className=" relative rounded-full overflow-hidden ring-1 dark:ring-0 dark:ring-offset-0 ring-offset-2 ring-sky-600 inline-block">
             <Image
               unoptimized
-              width={imageWidth ?? 40}
+              width={imageWidth ?? 46}
               height={imageHeight ?? 40}
               src={currentUser.image}
               alt={"avatar"}
@@ -56,7 +56,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           </div>
         ) : (
           // Render the initials of the user4
-          <div className="h-10 w-10 ring-sky-500 ring-1 dark:ring-1 dark:ring-gray-500 ring-offset-2 rounded-full bg-gray-100 dark:bg-white flex items-center justify-center">
+          <div className="h-9 w-9 ring-sky-500 ring-1 dark:ring-1 dark:ring-gray-500 ring-offset-2 rounded-full bg-gray-100 dark:bg-white flex items-center justify-center">
             {initials.map((el, idx) => (
               <span className="text-gray-500 text-sm" key={idx}>
                 {el[0]}
@@ -66,7 +66,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         )}
         {!removeBadge && !loading ? (
           isActive ? (
-            <span className="absolute block bg-teal-400 right-1 top-7 rounded-full p-1 ring-1 dark:ring-0 dark:ring-offset-0 ring-white dark:ring-gray-400 ring-offset-2" />
+            <span className="absolute block bg-teal-500 right-0 top-7 rounded-full p-1 ring-1 ring-offset-1 dark:ring-0 dark:ring-offset-0 ring-teal-400 dark:ring-gray-400" />
           ) : (
             <span className="absolute block bg-slate-500 right-0 top-7 rounded-full p-1 ring-1 dark:ring-offset-2 ring-white dark:ring-gray-400 ring-offset-2" />
           )
