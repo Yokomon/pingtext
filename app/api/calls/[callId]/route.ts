@@ -1,7 +1,6 @@
 import { getCurrentUser } from "@/app/actions/getCurrentUser";
-import { pusherServer } from "@/app/lib/pusher";
 import { NextResponse } from "next/server";
-import prismadb from '@/app/utils/prismadb'
+import prismadb from "@/app/utils/prismadb";
 
 interface IParams {
   params: {
@@ -27,13 +26,6 @@ export async function POST(_: Request, { params }: IParams) {
     if (!existingCall) {
       return new NextResponse("Call record does not exists", { status: 404 });
     }
-
-    // Call event triggered
-    await pusherServer.trigger(
-      existingCall.id,
-      "calls:initiated",
-      existingCall
-    );
 
     return NextResponse.json(existingCall);
   } catch (error) {
