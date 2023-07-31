@@ -45,16 +45,18 @@ export async function POST(req: Request) {
         audioUrl,
       },
       include: {
-        sender: true,
+        sender: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+          },
+        },
       },
     });
 
-    await pusherServer.trigger(`presence-${conversationId}`, "pings:new", {
-      newPing,
-      conversationId,
-    });
-
-    await prismadb.conversation.update({
+    const updatedConversation = await prismadb.conversation.update({
       where: {
         id: conversationId,
       },
@@ -68,7 +70,23 @@ export async function POST(req: Request) {
       },
       include: {
         users: true,
+        pings: true,
       },
+    });
+
+    const lastPing =
+      updatedConversation.pings[updatedConversation.pings.length - 1];
+
+    await pusherServer.trigger(`presence-${conversationId}`, "pings:new", {
+      newPing,
+      conversationId,
+    });
+
+    updatedConversation.users.map((user) => {
+      pusherServer.trigger(user.email!, "conversations:update", {
+        conversationId,
+        newPing: lastPing,
+      });
     });
 
     return NextResponse.json(newPing);
