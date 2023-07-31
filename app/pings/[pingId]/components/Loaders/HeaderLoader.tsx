@@ -4,7 +4,7 @@ import { Avatar } from "@/app/components/Avatar";
 
 export const HeaderLoader = () => {
   return (
-    <div className="flex items-center p-4 h-20 justify-between border-b border-gray-100 dark:bg-neutral-900 dark:border-gray-50/10 w-full shadow-sm">
+    <div className="flex items-center p-4 h-20 justify-between border-b border-gray-100 dark:bg-slate-900 dark:border-gray-50/10 w-full shadow-sm">
       <div className="ml-5 flex flex-1 space-x-3">
         <Avatar loading />
         <div className="pt-2">

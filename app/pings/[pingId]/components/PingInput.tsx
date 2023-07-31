@@ -25,7 +25,7 @@ export const PingInput: React.FC<PingInputProps> = ({
         autoComplete={id}
         {...register(id, { required })}
         placeholder={placeholder}
-        className="text-black dark:text-sky-600 text-sm placeholder:text-sm font-normal py-2 px-4 bg-neutral-100 focus:outline-none rounded-full w-full pr-10"
+        className="text-black selection:dark:text-white selection:dark:bg-slate-600 dark:text-sky-600 text-sm placeholder:text-sm font-normal py-2 px-4 bg-neutral-100 focus:outline-none rounded-full w-full pr-10"
       />
     </div>
   );

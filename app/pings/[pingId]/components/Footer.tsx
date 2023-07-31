@@ -127,7 +127,7 @@ export const Footer: React.FC<FooterProps> = ({ conversation }) => {
   };
 
   return (
-    <div className="w-full p-4 border-t dark:bg-neutral-900 border-gray-50/10 shadow-sm">
+    <div className="w-full p-4 border-t dark:bg-slate-900 border-gray-50/10 shadow-sm">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full items-center relative"

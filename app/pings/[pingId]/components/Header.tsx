@@ -11,9 +11,9 @@ import { HiOutlineDotsHorizontal } from "@react-icons/all-files/hi/HiOutlineDots
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
 import { FiTrash2 } from "@react-icons/all-files/fi/FiTrash2";
 import { AiOutlineClear } from "@react-icons/all-files/ai/AiOutlineClear";
+import { User } from "@prisma/client";
 
 import { Avatar } from "@/app/components/Avatar";
-import { User } from "@prisma/client";
 import { useStore } from "@/app/hooks/useStore";
 import useChannelList from "@/app/hooks/useChannelList";
 
@@ -51,14 +51,14 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
     clearPingsMutation.mutate({ conversationId });
 
   return (
-    <div className="flex items-center p-4 h-20 justify-between border-b border-gray-100 dark:bg-neutral-900 dark:border-gray-50/10 w-full shadow-sm">
+    <div className="flex items-center p-2 md:p-4 h-20 justify-between border-b border-gray-100 dark:bg-slate-900 dark:border-gray-50/10 w-full shadow-sm">
       <div className="p-2 hover:bg-sky-100 rounded-full duration-500 lg:hidden">
         <MdArrowBack
           size={24}
           className="hover:text-sky-600 cursor-pointer text-gray-500"
         />
       </div>
-      <div className="ml-5 flex flex-1 space-x-3 items-center">
+      <div className=" ml-2 md:ml-5 flex flex-1 space-x-3 items-center">
         <div className="relative w-9">
           <Avatar currentUser={otherUser} />
         </div>
@@ -98,15 +98,15 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
                 leaveTo="opacity-0 translate-y-1"
               >
                 <Popover.Panel className="absolute max-w-sm right-1/2 z-10 my-4">
-                  <div className="overflow-hidden shadow-md ring-1 ring-opacity-10 ring-black rounded-md">
-                    <div className="relative bg-white w-52">
-                      <ul className="flex flex-col p-3 py-4 list-none duration-500 text-black">
-                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-sky-100">
+                  <div className="overflow-hidden shadow-md ring-1 ring-opacity-10 ring-black rounded-md ">
+                    <div className="relative bg-white dark:bg-slate-600 w-52">
+                      <ul className="flex flex-col p-3 py-4 list-none duration-500 dark:text-white">
+                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-300 hover:bg-sky-100 hover:text-black">
                           <h5 className="flex-1 text-sm">View profile</h5>
                         </li>
                         <li
                           onClick={() => handleCall(otherUser.id)}
-                          className="flex xs:hidden items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-sky-100"
+                          className="flex xs:hidden items-center p-2 cursor-pointer rounded-md duration-300 hover:bg-sky-100 hover:text-black"
                         >
                           <h5 className="flex-1 text-sm tracking-wide">
                             Video call
@@ -117,22 +117,28 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
                           />
                         </li>
                         <li
-                          className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-rose-100"
+                          className="flex items-center p-2 cursor-pointer rounded-md duration-300 hover:bg-rose-100 hover:text-black"
                           onClick={() => {
                             clearAllPings(params?.pingId as string);
                             close();
                           }}
                         >
-                          <h5 className="flex-1 text-sm text-rose-500 tracking-wide">
-                            Clear pings
+                          <h5 className="flex-1 text-sm text-rose-500 dark:text-rose-400 tracking-wide">
+                            Clear all pings
                           </h5>
-                          <AiOutlineClear className="text-rose-500" size={19} />
+                          <AiOutlineClear
+                            className="text-rose-500 dark:text-rose-400"
+                            size={19}
+                          />
                         </li>
-                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-700 hover:bg-rose-100">
-                          <h5 className="flex-1 text-sm text-rose-500 tracking-wide">
+                        <li className="flex items-center p-2 cursor-pointer rounded-md duration-300 hover:bg-rose-100">
+                          <h5 className="flex-1 text-sm text-rose-500 dark:text-rose-400 tracking-wide">
                             Delete ping
                           </h5>
-                          <FiTrash2 className="text-rose-500" size={19} />
+                          <FiTrash2
+                            className="text-rose-500 dark:text-rose-400"
+                            size={19}
+                          />
                         </li>
                       </ul>
                     </div>
