@@ -23,7 +23,7 @@ export const useCurrentConversations = ({
   const pusherClient = usePusher();
 
   useEffect(() => {
-    pusherClient.subscribe("conversations");
+    pusherClient.subscribe(currentUser.email);
 
     const newConversationHandler: (_T: FullConversationType) => void = (
       conversation: FullConversationType
@@ -62,7 +62,7 @@ export const useCurrentConversations = ({
 
       // Notification sound is only heard by other users
       if (
-        newPing.sender.id !== currentUser.id &&
+        newPing.senderId !== currentUser.id &&
         newPing.receiverIds.length === 1
       ) {
         pingSound.play();
@@ -73,7 +73,7 @@ export const useCurrentConversations = ({
     pusherClient.bind("conversations:update", updateConversation);
 
     return () => {
-      pusherClient.unsubscribe("conversations");
+      pusherClient.unsubscribe(currentUser.email);
       pusherClient.unbind("conversations:new", newConversationHandler);
       pusherClient.unbind("conversations:update", updateConversation);
     };

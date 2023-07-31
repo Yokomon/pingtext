@@ -151,7 +151,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
         userActions={dynamicState.userActions}
         isDangerous
       />
-      <aside className="h-full lg:p-4 lg:pl-20 border-r border-gray-50 dark:border-gray-50/10 shadow-sm lg:w-[27rem] fixed inset-0">
+      <aside className="h-full lg:p-4 lg:pl-20 dark:bg-slate-900 border-r border-gray-50 dark:border-gray-50/10 shadow-sm lg:w-[27rem] fixed inset-0">
         <section className="px-5 pr-1">
           <h3 className="text-sky-600 text-3xl mb-4 font-semibold tracking-wide">
             Notifications

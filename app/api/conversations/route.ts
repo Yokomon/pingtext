@@ -13,16 +13,17 @@ export async function POST(req: Request) {
         status: 401,
       });
 
-    const { id: userId } = await req.json();
+    const { id: friendId } = await req.json();
 
-    if (!userId) return new NextResponse("User id not found", { status: 404 });
+    if (!friendId)
+      return new NextResponse("User id not found", { status: 404 });
 
     // We need to check if the conversation already exists
     // to avoid duplicates conversations in DB
     const existingConversations = await prismadb.conversation.findFirst({
       where: {
         userIds: {
-          has: userId,
+          equals: [friendId, currentUser.id],
         },
       },
       include: {
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
       const newConversation = await prismadb.conversation.create({
         data: {
           users: {
-            connect: [{ id: currentUser.id }, { id: userId }],
+            connect: [{ id: currentUser.id }, { id: friendId }],
           },
         },
         include: {
@@ -46,20 +47,16 @@ export async function POST(req: Request) {
         },
       });
 
-      newConversation.users.forEach(() => {
-        pusherServer.trigger(
-          "conversations",
-          "conversations:new",
-          newConversation
-        );
+      newConversation.users.forEach((user) => {
+        pusherServer.trigger(user.email, "conversations:new", newConversation);
       });
 
       return NextResponse.json(newConversation);
     }
 
-    existingConversations.users.forEach(() => {
+    existingConversations.users.forEach((user) => {
       pusherServer.trigger(
-        "conversations",
+        user.email,
         "conversations:new",
         existingConversations
       );

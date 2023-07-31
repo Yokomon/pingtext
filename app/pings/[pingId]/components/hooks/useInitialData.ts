@@ -26,18 +26,18 @@ export const useInitialData = ({ pings, conversationId }: IProps) => {
       const initialMembers = new Set<string>();
       const lastPing = pings[pings.length - 1];
 
+      members.each((member: Record<string, any>) => {
+        initialMembers.add(member.id);
+      });
+
+      pingMembers.current = initialMembers;
+
       if (
         lastPing?.sender.email !== members.me.id &&
         lastPing?.receiverIds.length !== 2
       ) {
         axios.post(`/api/conversations/${conversationId}/seen`);
       }
-
-      members.each((member: Record<string, any>) => {
-        initialMembers.add(member.id);
-      });
-
-      pingMembers.current = initialMembers;
     });
 
     channel.bind("pusher:member_added", (member: Record<string, any>) => {
@@ -49,6 +49,7 @@ export const useInitialData = ({ pings, conversationId }: IProps) => {
     });
 
     const newPingHandler: (_T: PusherConversation) => void = ({ newPing }) => {
+      axios.post(`/api/conversations/${conversationId}/seen`);
       setInitialData((data) => {
         const hasTodayType = data.some(
           (item) => "type" in item && item.date === "Today"
@@ -60,18 +61,18 @@ export const useInitialData = ({ pings, conversationId }: IProps) => {
 
         return newData;
       });
-
-      axios.post(`/api/conversations/${conversationId}/seen`);
     };
 
     const updatePingHandler: (_T: FullPingType) => void = (ping) => {
       setInitialData((initialData) => {
-        const isPingRead = ping.receiverIds.length === 2;
+        const isPingRead =
+          pingMembers.current?.size === 2 || ping.receiverIds.length === 2;
+
         const notReadPing = initialData.filter(
           (data) => "id" in data && data.receiverIds.length === 1
         );
 
-        if (isPingRead && notReadPing.length > 1) {
+        if (isPingRead && notReadPing.length > 0) {
           return initialData.map((data) => {
             if ("id" in data) return { ...data, receiverIds: new Array(2) };
             return data;
@@ -86,13 +87,15 @@ export const useInitialData = ({ pings, conversationId }: IProps) => {
       });
     };
 
-    pusherClient.bind("pings:new", newPingHandler);
-    pusherClient.bind("ping:updated", updatePingHandler);
+    channel.bind("pings:new", newPingHandler);
+    channel.bind("ping:updated", updatePingHandler);
 
     return () => {
-      pusherClient.unbind("pings:new", newPingHandler);
-      pusherClient.unbind("ping:updated", updatePingHandler);
-      pusherClient.unsubscribe(`presence-${conversationId}`);
+      if (pingMembers.current?.size) {
+        channel.unbind("pings:new", newPingHandler);
+        channel.unbind("ping:updated", updatePingHandler);
+        channel.unsubscribe();
+      }
     };
   }, [conversationId, pings, pusherClient]);
 

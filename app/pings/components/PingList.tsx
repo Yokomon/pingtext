@@ -30,7 +30,7 @@ export const PingList: React.FC<PingListProps> = ({
   return (
     <aside
       className={clsx({
-        ["fixed lg:block dark:bg-neutral-900 left-0 lg:left-12 pl-12 inset-0 lg:w-[24rem] border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4"]:
+        ["fixed lg:block dark:bg-slate-900 left-0 lg:left-12 pl-12 inset-0 lg:w-[24rem] border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4"]:
           true,
         ["hidden"]: isOpen as boolean,
       })}

@@ -20,8 +20,8 @@ type ProcessNotificationProps = {
     unknown
   >;
   openNotifications: boolean;
-  setOpenNotifications: (value: SetStateAction<boolean>) => void;
-  setDynamicState: (value: SetStateAction<DynamicStateType>) => void;
+  setOpenNotifications: (_value: SetStateAction<boolean>) => void;
+  setDynamicState: (_value: SetStateAction<DynamicStateType>) => void;
   isUserSender: boolean;
 };
 

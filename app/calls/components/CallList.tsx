@@ -37,7 +37,7 @@ export const CallList = ({ friends }: CallListProps) => {
     <div>
       <aside
         className={clsx({
-          ["inset-0 lg:block dark:bg-neutral-900 lg:pl-20 fixed border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4 lg:w-[27rem]"]:
+          ["inset-0 lg:block dark:bg-slate-900 lg:pl-20 fixed border-r border-gray-50 dark:border-gray-50/10 shadow-sm p-4 lg:w-[27rem]"]:
             true,
           ["hidden"]: isOpen,
         })}
