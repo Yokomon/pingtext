@@ -11,6 +11,7 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
   try {
     const currentUser = await getCurrentUser();
     const { conversationId } = params;
+
     if (!currentUser)
       return new NextResponse("Unauthorized access", { status: 401 });
     if (!conversationId)
@@ -21,7 +22,12 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
         id: conversationId,
       },
       include: {
-        pings: true,
+        pings: { select: { id: true, senderId: true, receiverIds: true } },
+        users: {
+          select: {
+            email: true,
+          },
+        },
       },
     });
 
@@ -57,24 +63,26 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
           },
         },
         include: {
-          sender: true,
+          sender: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              image: true,
+            },
+          },
         },
       });
 
-      await pusherServer.trigger("conversations", "conversations:update", {
+      await pusherServer.trigger(currentUser.email, "conversations:update", {
         newPing: updatedPing,
         conversationId,
       });
 
-      await pusherServer.trigger(
-        `presence-${conversationId}`,
-        "ping:updated",
-        updatedPing
-      );
-
       return NextResponse.json("Conversation updated");
     }
 
+    // // Update pings when both users sees last ping
     const { count } = await prismadb.pings.updateMany({
       where: {
         conversationId: conversationId,
@@ -85,28 +93,39 @@ export async function POST(_req: Request, { params }: { params: IParams }) {
     });
 
     if (count) {
-      const newPing = await prismadb.pings.findFirst({
+      const lastModifiedPing = await prismadb.pings.findFirst({
         where: {
           id: lastPing.id,
         },
         include: {
-          sender: true,
+          sender: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              image: true,
+            },
+          },
         },
       });
 
-      await pusherServer.trigger("conversations", "conversations:update", {
-        newPing: newPing,
-        conversationId,
+      existingConversation.users.map((user) => {
+        pusherServer.trigger(user.email, "conversations:update", {
+          newPing: lastModifiedPing,
+          conversationId,
+        });
       });
 
       await pusherServer.trigger(
         `presence-${conversationId}`,
         "ping:updated",
-        newPing
+        lastModifiedPing
       );
+
+      return NextResponse.json("All Conversations updated!");
     }
 
-    return NextResponse.json("Conversation updated!");
+    return NextResponse.json("Conversations updated");
   } catch (error) {
     console.log(`Conversation seen error: ${error}`);
     return new NextResponse("An error occurred", { status: 500 });
