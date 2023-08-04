@@ -1,12 +1,12 @@
 "use client";
 
 import clsx from "clsx";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import axios from "axios";
 import { Popover, Transition } from "@headlessui/react";
 import { BsCameraVideoFill } from "@react-icons/all-files/bs/BsCameraVideoFill";
 import { useMutation } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { HiOutlineDotsHorizontal } from "@react-icons/all-files/hi/HiOutlineDotsHorizontal";
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
 import { FiTrash2 } from "@react-icons/all-files/fi/FiTrash2";
@@ -19,11 +19,14 @@ import useChannelList from "@/app/hooks/useChannelList";
 
 interface HeaderProps {
   otherUser: User;
+  conversationId: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
+export const Header: React.FC<HeaderProps> = ({
+  otherUser,
+  conversationId,
+}) => {
   const router = useRouter();
-  const params = useParams();
 
   const members = useStore(useChannelList, (state) => state.members);
   const isUserOnline = members.has(otherUser.email);
@@ -49,6 +52,12 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
 
   const clearAllPings = (conversationId: string) =>
     clearPingsMutation.mutate({ conversationId });
+
+  useEffect(() => {
+    return () => {
+      router.refresh();
+    };
+  }, [router]);
 
   return (
     <div className="flex items-center p-2 md:p-4 h-20 justify-between border-b border-gray-100 dark:bg-slate-900 dark:border-gray-50/10 w-full shadow-sm">
@@ -119,7 +128,7 @@ export const Header: React.FC<HeaderProps> = ({ otherUser }) => {
                         <li
                           className="flex items-center p-2 cursor-pointer rounded-md duration-300 hover:bg-rose-100 hover:text-black"
                           onClick={() => {
-                            clearAllPings(params?.pingId as string);
+                            clearAllPings(conversationId);
                             close();
                           }}
                         >
