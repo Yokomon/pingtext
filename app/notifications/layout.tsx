@@ -9,16 +9,16 @@ interface LayoutProps {
 }
 
 async function Layout({ children }: LayoutProps) {
-  const userNotifications = await getCurrentUserNotifications();
-  const readNotifications = await getReadNotifications();
-  const currentUser = await getCurrentUser();
+  const [userNotifications, readNotifications, currentUser] = await Promise.all(
+    [getCurrentUserNotifications(), getReadNotifications(), getCurrentUser()]
+  );
 
   return (
     <SideBar>
       <NotificationsList
         unReadNotifications={userNotifications}
         readNotifications={readNotifications}
-        currentUser={currentUser!}
+        currentUser={currentUser}
       />
       {children}
     </SideBar>

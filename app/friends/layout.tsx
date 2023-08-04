@@ -8,11 +8,14 @@ interface LayoutProps {
 }
 
 async function Layout({ children }: LayoutProps) {
-  const userFriends = await getAllFriends();
-  const otherUsers = await getOtherUsers();
+  const [userFriends, otherUsers] = await Promise.all([
+    getAllFriends(),
+    getOtherUsers(),
+  ]);
+
   return (
     <SideBar>
-      <FriendsList userFriends={userFriends!} otherUsers={otherUsers} />
+      <FriendsList userFriends={userFriends} otherUsers={otherUsers} />
       {children}
     </SideBar>
   );

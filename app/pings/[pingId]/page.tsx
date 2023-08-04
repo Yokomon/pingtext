@@ -13,8 +13,10 @@ interface IParams {
 }
 
 export default async function PingHomePage({ params }: IParams) {
-  const conversation = await getConversationById(params.pingId);
-  const pings = await getPings(params.pingId);
+  const [conversation, pings] = await Promise.all([
+    getConversationById(params.pingId),
+    getPings(params.pingId),
+  ]);
 
   // Redirect users if there is no conversation
   if (!conversation) redirect("/pings");
@@ -24,7 +26,7 @@ export default async function PingHomePage({ params }: IParams) {
   return (
     <div className="lg:pl-[22rem] h-full">
       <div className="flex h-full flex-col">
-        <Header otherUser={otherUser} />
+        <Header otherUser={otherUser} conversationId={conversation.id} />
         <Body pings={pings} />
         <Footer conversation={conversation} />
       </div>
