@@ -92,9 +92,9 @@ export const useInitialData = ({ pings, conversationId }: IProps) => {
 
     return () => {
       if (pingMembers.current?.size) {
+        channel.unsubscribe();
         channel.unbind("pings:new", newPingHandler);
         channel.unbind("ping:updated", updatePingHandler);
-        channel.unsubscribe();
       }
     };
   }, [conversationId, pings, pusherClient]);
