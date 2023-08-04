@@ -32,7 +32,7 @@ const useChannelList = create<ChannelList>()(
         name: "pingStore",
         storage: {
           getItem: (name) => {
-            const str = decryptMessage(sessionStorage.getItem(name)!);
+            const str = decryptMessage(localStorage.getItem(name)!);
             return {
               state: {
                 ...JSON.parse(str!).state,
@@ -50,9 +50,9 @@ const useChannelList = create<ChannelList>()(
               })
             );
 
-            sessionStorage.setItem(name, str);
+            localStorage.setItem(name, str);
           },
-          removeItem: (name) => sessionStorage.removeItem(name),
+          removeItem: (name) => localStorage.removeItem(name),
         },
       }
     )
