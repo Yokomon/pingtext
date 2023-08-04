@@ -18,7 +18,7 @@ import processNotification from "../utils/processNotification";
 interface NotificationsListProps {
   unReadNotifications: FullNotifications[];
   readNotifications: FullNotifications[];
-  currentUser: User;
+  currentUser: User | null
 }
 
 export type EnableModalType = {
