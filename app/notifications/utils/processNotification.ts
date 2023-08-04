@@ -9,7 +9,7 @@ type ProcessNotificationProps = {
   friend: Friend | null;
   user: User;
   notification: Notification;
-  currentUser: User;
+  currentUser: User | null;
   notificationMutation: UseMutationResult<
     AxiosResponse<any, any>,
     unknown,
@@ -38,6 +38,7 @@ const processNotification = ({
 }: ProcessNotificationProps) => {
   const isNotificationRead =
     notification.friendRequestAccepted &&
+    currentUser !== null &&
     ((currentUser.id === notification.senderId && notification.readBySender) ||
       (currentUser.id === notification.recipientId &&
         notification.readByRecipient));

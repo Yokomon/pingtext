@@ -12,8 +12,10 @@ interface IParams {
 
 const CallIdPage = async ({ params }: IParams) => {
   const { callId } = params;
-  const currentUser = await getCurrentUser();
-  const callDetails = await getCallDetailsById(callId);
+  const [currentUser, callDetails] = await Promise.all([
+    getCurrentUser(),
+    getCallDetailsById(callId),
+  ]);
   const callReceiver = await getOtherUserById(callDetails?.callReceiverId!);
 
   const otherUser =

@@ -15,7 +15,7 @@ import { DynamicStateType } from "@/types/DynamicState";
 import { FriendsBox } from "./FriendsBox";
 
 interface FriendsListProps {
-  userFriends: AllFriends[];
+  userFriends: AllFriends[] | null;
   otherUsers: FullUsersTypes[];
 }
 
@@ -85,7 +85,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
               <FaUserFriends size={19} />
               <h4 className="text-base dark:text-gray-200">All friends</h4>
             </div>
-            {!userFriends.length ? (
+            {userFriends === null ? (
               <p className="my-10 text-sm text-gray-400 dark:text-gray-200 text-center">
                 No friends added
               </p>
